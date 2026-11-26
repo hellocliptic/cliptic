@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: cliptic
+    runtime: static
+    buildCommand: echo "no build needed"
+    staticPublishPath: .
+    headers:
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff

@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cliptic">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Cliptic</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* layout: monochrome phone column. header chips, pill tabs, a 3-cell stat strip, one stage card, one control panel, a white primary button. */
+:root{
+  color-scheme:dark;
+  --bg:#0a0a0b; --panel:#111113; --panel2:#18181b; --line:#242428; --line2:#34343a; --fg:#f3f3f4; --muted:#8d8d95; --soft:#b9b9c1;
+  --cta:#f1f1f2; --ctafg:#0a0a0b; --good:#3ddc97; --bad:#ff6b6b; --warn:#ffcf5a; --accent:#f3f3f4;
+  --font:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; --mono:ui-monospace,'SF Mono',Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--fg);font:400 15px/1.45 var(--font);padding-block:12px 40px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
+.app{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;align-items:center;gap:8px;padding-top:4px}
+.logo{width:46px;height:46px;border-radius:14px;border:1px solid var(--line2);background:var(--panel);display:grid;place-items:center;flex:none;overflow:hidden}
+.logo img{width:40px;height:40px;display:block}
+.name{font-weight:700;font-size:21px;letter-spacing:-.01em;margin-right:auto;padding-left:2px}
+.chip{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:99px;background:var(--panel);border:1px solid var(--line);font-weight:600;font-size:14px;color:var(--soft);white-space:nowrap}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--muted);display:block}
+.chip.ok i{background:var(--good)} .chip.bad i{background:var(--bad)}
+.tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{height:44px;padding:0 18px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font:600 15px var(--font);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:8px}
+.tab[aria-current=true]{background:var(--panel2);border-color:var(--line2);color:var(--fg)}
+h1{font:700 30px/1.1 var(--font);letter-spacing:-.02em;margin:6px 0 0}
+.lead{color:var(--muted);font-size:16px;margin:0}
+.strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:20px;background:var(--panel);overflow:hidden}
+.strip div{padding:12px 14px;border-left:1px solid var(--line);min-width:0}
+.strip div:first-child{border-left:0}
+.strip small{display:block;color:var(--muted);font-size:12.5px;font-weight:500}
+.strip b{display:block;font-size:20px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strip b.good{color:var(--good)} .strip b.bad{color:var(--bad)}
+.stage{border:1px solid var(--line);border-radius:24px;background:var(--panel);padding:16px;min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
+.stage .big{width:112px;height:112px;border-radius:50%;border:5px solid #e8e8ec;background:radial-gradient(circle at 50% 35%,#2a2a30,#0f0f12);display:grid;place-items:center}
+.stage p{margin:0;color:var(--muted)}
+.panel{border:1px solid var(--line);border-radius:24px;background:var(--panel);padding:12px;display:flex;flex-direction:column;gap:10px}
+.lbl{font-weight:600;font-size:15px;color:var(--soft);padding:2px 4px 0;display:flex;justify-content:space-between}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;border:1px solid var(--line);border-radius:18px;padding:4px;background:var(--bg)}
+.seg button{height:42px;border-radius:14px;border:1px solid transparent;background:transparent;color:var(--muted);font:600 15px var(--font);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--panel2);border-color:var(--line2);color:var(--fg)}
+.cta{height:56px;border-radius:18px;border:0;background:var(--cta);color:var(--ctafg);font:700 17px var(--font);cursor:pointer;display:flex;gap:10px;align-items:center;justify-content:center;width:100%}
+.cta:disabled{background:var(--panel2);color:#6d6d75;cursor:not-allowed}
+.btns{display:flex;gap:8px}
+.btn{flex:1;height:48px;border-radius:16px;border:1px solid var(--line2);background:var(--panel2);color:var(--fg);font:600 15px var(--font);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn.ghost{background:transparent}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.note{color:var(--muted);font-size:13px;margin:0}
+.err{border:1px solid #5a2a2d;background:#1d1214;color:#ffb3b3;border-radius:16px;padding:12px}
+.okbox{border:1px solid #1f4a39;background:#0f1a16;color:#9be8c4;border-radius:16px;padding:12px;font-size:14px}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);font-weight:500}
+input[type=number],select{background:var(--bg);border:1px solid var(--line);border-radius:14px;color:var(--fg);padding:12px;font:600 15px var(--font);width:100%;height:48px}
+.fileline{display:flex;gap:12px;align-items:center;text-align:left;width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:10px 12px}
+.fileline img{width:72px;height:44px;border-radius:8px;object-fit:cover;background:#000;flex:none}
+.fileline b{display:block;font-weight:600;overflow-wrap:anywhere;font-size:14px}
+/* stages */
+.st{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.st:first-child{border-top:0}
+.dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line2);flex:none;display:grid;place-items:center;font-size:12px;margin-top:1px}
+.st.on .dot{border-color:var(--fg)} .st.done .dot{background:var(--fg);border-color:var(--fg);color:#000}
+.prog{height:5px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-top:7px}
+.prog i{display:block;height:100%;width:0;background:var(--fg);transition:width .15s}
+/* clips */
+.clip{display:grid;grid-template-columns:60px minmax(0,1fr);gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:14px;cursor:pointer;width:100%;text-align:left;color:var(--fg);font:inherit}
+.clip:hover{border-color:var(--line2)}
+.rk{height:60px;border-radius:16px;background:var(--panel2);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.rk b{font-size:22px;line-height:1} .rk small{color:var(--muted);font-size:11px;margin-top:3px}
+.tc{font:600 12.5px var(--mono);color:var(--muted)}
+svg.wave{width:100%;height:34px;display:block;margin:8px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;padding:3px 10px;border-radius:99px;border:1px solid var(--line2);color:var(--soft)}
+.tag.g{border-color:#1f4a39;color:var(--good)}
+.txt{margin:2px 0 6px;color:var(--soft);font-size:14px}
+.bars{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px}
+.bar{display:grid;grid-template-columns:68px 1fr;gap:6px;align-items:center;font-size:11.5px;color:var(--muted)}
+.bar i{height:5px;border-radius:3px;background:var(--panel2);position:relative;overflow:hidden}.bar i b{position:absolute;inset:0 auto 0 0;background:var(--fg);border-radius:3px}
+/* preview */
+.phone{width:min(100%,300px);aspect-ratio:9/16;margin:0 auto;background:#000;border-radius:22px;position:relative;overflow:hidden;border:1px solid var(--line2)}
+.phone video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cap{position:absolute;left:6%;right:6%;top:72%;transform:translateY(-50%);text-align:center;font:800 clamp(18px,7vw,26px)/1.2 var(--font);color:#fff;text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000}
+.cap.classic,.cap.minimal{font-weight:600;font-size:clamp(13px,5vw,18px)}.cap span.on{color:#ffe500}.cap.classic span.on{color:#fff}
+.hook{position:absolute;left:7%;right:7%;top:13%;background:#fff;color:#0a0a0b;border-radius:14px;padding:9px 12px;text-align:center;font:800 clamp(13px,5vw,17px)/1.2 var(--font);opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 6px 20px #0008}.hook.on{opacity:1}
+.fxbar{position:absolute;left:0;bottom:0;height:3px;background:#fff;width:0}
+.cap.fx span.on{display:inline-block;transform:scale(1.14)}
+.ttl{margin:0 0 4px;font-weight:700;font-size:15px;line-height:1.3}
+.ctl{display:flex;gap:10px;align-items:center;max-width:300px;margin:10px auto 0;width:100%}.ctl input{flex:1;min-width:0}
+.out{font:11px/1.4 var(--mono);white-space:pre-wrap;max-height:150px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px}
+.hidden-video{position:absolute;left:-9999px;width:160px;height:90px}
+.back{align-self:flex-start;background:none;border:0;color:var(--soft);font:600 15px var(--font);padding:6px 0;cursor:pointer}
+select.hid{display:none}
+[hidden]{display:none!important}
+footer{display:flex;gap:18px;color:var(--muted);font-size:12.5px;padding:6px 4px}
+</style>
+
+<div class="app">
+  <header>
+    <div class="logo"><img alt="Cliptic" src="data:image/png;base64,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"></div>
+    <div class="name">Cliptic</div>
+    <span class="chip" id="chipModel"><i></i><span id="chipModelT">Speech: idle</span></span>
+    <span class="chip" id="chipDev"><i></i><span id="chipDevT">CPU</span></span>
+  </header>
+  <div style="padding:0 16px 8px"><button class="cta" id="install" hidden>Install Cliptic as an app</button></div>
+  <nav class="tabs" aria-label="Main">
+    <button class="tab" data-t="home" aria-current="true">Studio</button>
+    <button class="tab" data-t="clips">Clips</button>
+    <button class="tab" data-t="set">Settings</button>
+  </nav>
+
+  <!-- STUDIO -->
+  <main id="s-home" class="app" style="gap:14px">
+    <div><h1>Studio</h1><p class="lead">Import a video. Cliptic transcribes it on your device, then cuts complete moments that start and end on whole sentences.</p></div>
+    <div class="strip"><div><small>Length</small><b id="st-len">—</b></div><div><small>Resolution</small><b id="st-res">—</b></div><div><small>Size</small><b id="st-size">—</b></div></div>
+    <section class="stage" aria-label="Import">
+      <input id="file" type="file" accept="video/*" hidden>
+      <div id="dropempty" style="display:flex;flex-direction:column;align-items:center;gap:12px">
+        <div class="big"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#d8d8de" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg></div>
+        <p>Pick a video from your phone or drop one here.</p>
+      </div>
+      <div id="fileinfo" class="fileline" hidden></div>
+      <button class="btn" id="pick" style="width:100%;flex:none">Import video</button>
+    </section>
+    <section class="panel">
+      <div class="lbl"><span>Clip length</span></div>
+      <div class="seg" id="seg-len"><button data-p="15,25,45">Short</button><button data-p="20,35,60" aria-pressed="true">Standard</button><button data-p="30,50,90">Long</button></div>
+      <div class="lbl"><span>Speech model</span></div>
+      <div class="seg" id="seg-mode"><button data-v="fast">Fast</button><button data-v="balanced" aria-pressed="true">Balanced</button></div>
+      <select id="mode" class="hid"><option value="fast">fast</option><option value="balanced" selected>balanced</option></select>
+      <button class="cta" id="go" disabled>✦ Find best clips</button>
+      <div id="homeerr" class="err" hidden></div>
+      <p class="note" id="asrnote">First run downloads the speech model once (Fast about 40 MB, Balanced about 80 MB). Everything runs on your device.</p>
+    </section>
+    <section class="panel">
+      <div class="lbl"><span>YouTube links</span></div>
+      <p class="note">Not supported. Downloading from YouTube breaks YouTube's terms and a web page cannot do it anyway. If it is your own video, export it from YouTube Studio and import the file here.</p>
+    </section>
+  </main>
+
+  <!-- ANALYSING -->
+  <main id="s-run" class="app" hidden>
+    <h1>Analysing</h1><p class="lead" id="runfile"></p>
+    <div class="panel" id="stages" style="padding:6px 14px"></div>
+    <button class="btn" id="cancel">Cancel</button>
+  </main>
+
+  <!-- CLIPS -->
+  <main id="s-clips" class="app" hidden>
+    <h1>Best clips</h1>
+    <div class="strip"><div><small>Clips</small><b id="sc-n">0</b></div><div><small>Top score</small><b id="sc-top">—</b></div><div><small>Words heard</small><b id="sc-words">0</b></div></div>
+    <p class="note" id="clipsmeta"></p>
+    <div id="clips" class="app" style="gap:12px"></div>
+    <p class="note">Scores estimate content quality from the signals shown. They do not predict views.</p>
+  </main>
+
+  <!-- PREVIEW -->
+  <main id="s-prev" class="app" hidden>
+    <button class="back" id="back">‹ Clips</button>
+    <div class="strip"><div><small>Score</small><b id="sp-score">—</b></div><div><small>Length</small><b id="sp-len">—</b></div><div><small>Ending</small><b id="sp-end">—</b></div></div>
+    <div class="phone"><video id="pv" playsinline></video><div class="hook" id="hook"></div><div class="cap" id="cap"></div><div class="fxbar" id="fxbar"></div></div>
+    <div class="ctl"><button class="btn" id="play" style="flex:none;width:84px">Play</button><input id="seek" type="range" min="0" max="1000" value="0" aria-label="Seek"><span class="tc" id="tnow">0:00</span></div>
+    <section class="panel">
+      <div class="lbl"><span>Framing</span></div>
+      <div class="seg" id="seg-frame"><button data-v="follow" aria-pressed="true">Follow subject</button><button data-v="center">Centre</button></div>
+      <select id="frame" class="hid"><option value="follow">f</option><option value="center">c</option></select>
+      <div class="lbl"><span>Captions</span></div>
+      <div class="seg" id="seg-style"><button data-v="POP" aria-pressed="true">Pop</button><button data-v="CLASSIC">Classic</button><button data-v="MINIMAL">Minimal</button></div>
+      <select id="style" class="hid"><option value="POP">p</option><option value="CLASSIC">c</option><option value="MINIMAL">m</option></select>
+      <div class="lbl"><span>Hook title card</span></div>
+      <div class="seg" id="seg-hookt"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
+      <select id="hookt" class="hid"><option value="on">on</option><option value="off">off</option></select>
+      <div class="lbl"><span>Effects (zoom, word pop, progress bar)</span></div>
+      <div class="seg" id="seg-fx"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
+      <select id="fx" class="hid"><option value="on">on</option><option value="off">off</option></select>
+      <div class="lbl"><span>Title and tags</span></div>
+      <div class="out" id="metaout"></div>
+      <div class="btns"><button class="btn ghost" id="copymeta">Copy title and tags</button></div>
+      <p class="note" id="prevnote"></p>
+      <button class="cta" id="save">⬇ Save clip</button>
+      <div class="prog" id="saveprog" hidden><i></i></div><p class="note" id="savenote"></p>
+      <div class="btns"><button class="btn ghost" id="srtbtn" hidden>Show captions as SRT</button></div>
+      <div class="out" id="srtout" hidden></div>
+      <div id="prevbars"></div>
+    </section>
+  </main>
+
+  <!-- SETTINGS -->
+  <main id="s-set" class="app" hidden>
+    <h1>Settings</h1>
+    <section class="panel">
+      <div class="row">
+        <label class="f">Min clip (s)<input id="min" type="number" value="20" min="3" max="120"></label>
+        <label class="f">Target (s)<input id="tgt" type="number" value="35" min="5" max="120"></label>
+        <label class="f">Max clip (s)<input id="max" type="number" value="60" min="8" max="180"></label>
+        <label class="f">Number of clips<input id="n" type="number" value="6" min="1" max="12"></label>
+      </div>
+      <label class="f">Spoken language<select id="lang"><option value="">Auto-detect</option><option value="english">English</option><option value="hindi">Hindi</option><option value="spanish">Spanish</option><option value="french">French</option><option value="german">German</option><option value="portuguese">Portuguese</option><option value="arabic">Arabic</option><option value="indonesian">Indonesian</option></select></label>
+      <button class="btn" id="rerank">Re-rank with these limits</button>
+      <p class="note">Re-rank reuses the analysis already done, so it is instant.</p>
+    </section>
+  </main>
+  <footer><span>On-device</span><span>No account</span><span>No upload</span></footer>
+</div>
+
+<video id="av" class="hidden-video" muted playsinline preload="auto"></video>
+
+<script>
+const LEX = {"hookPhrases": ["what if", "did you know", "here's", "here is", "the secret", "nobody", "no one", "never", "stop ", "imagine", "let me tell", "the truth", "the biggest", "the best", "the worst", "you won't believe", "this is why", "the reason", "how to", "why ", "the first", "the only", "most people", "i was wrong", "you need to", "you have to", "the problem", "mistake", "क्या आप जानते", "सच यह", "सच ये", "कोई नहीं", "कभी नहीं", "राज़", "राज ", "सबसे बड़ा", "असली वजह", "सोचिए", "क्या हो अगर", "ज़रा सोचो", "kya aap jaante", "sach ye", "koi nahi", "kabhi nahi"], "emotionWords": ["amazing", "incredible", "crazy", "insane", "love", "hate", "wow", "unbelievable", "shocking", "scary", "funny", "hilarious", "awesome", "terrible", "horrible", "cry", "cried", "died", "dead", "afraid", "angry", "happy", "sad", "proud", "furious", "obsessed", "wild", "mad", "omg", "dude", "seriously", "literally", "अविश्वसनीय", "कमाल", "पागल", "डर", "प्यार", "नफरत", "मज़ा", "हैरान", "ग़ज़ब", "गजब", "खतरनाक", "शानदार", "kamaal", "pagal", "gajab", "mast"], "payoffPhrases": ["that's why", "that is why", "so the lesson", "in the end", "turns out", "the point is", "that's how", "the answer is", "which means", "therefore", "so basically", "and that's", "the key is", "bottom line", "that's the", "the takeaway", "so remember", "इसलिए", "यही वजह", "नतीजा", "आखिर", "आख़िर", "इसका मतलब", "यही है", "isliye", "yahi wajah"], "weakStarts": ["and", "but", "so", "because", "which", "or", "then", "also", "yet", "anyway", "plus", "cause", "और", "लेकिन", "तो", "क्योंकि", "जो", "फिर", "या", "पर", "इसलिए"], "fillers": ["um", "uh", "er", "erm", "hmm", "mm", "ah", "like", "uhh", "umm", "अं", "हम्म"], "stopwords": ["the", "a", "an", "is", "are", "was", "were", "be", "been", "to", "of", "in", "on", "at", "for", "with", "and", "or", "but", "so", "if", "it", "this", "that", "i", "you", "we", "they", "he", "she", "my", "your", "do", "does", "did", "have", "has", "had", "as", "by", "from", "not", "just", "can", "will", "would", "है", "हैं", "था", "थी", "थे", "का", "की", "के", "में", "से", "को", "और", "पर", "ने", "यह", "वह", "भी", "तो", "ही", "कि", "एक", "हम", "आप", "मैं", "तुम", "नहीं", "हो", "कर"], "interestWords": ["secret", "truth", "mistake", "discovered", "realized", "learned", "million", "billion", "percent", "first", "only", "biggest", "never", "always", "problem", "solution", "reason", "actually", "important", "lesson", "story", "research", "study", "science", "money", "free", "hack", "tip", "proof", "result", "changed", "सच", "राज़", "वजह", "सबक", "कहानी", "पैसा", "समस्या", "समाधान", "ज़रूरी"]};
+const L = {}; for (const k in LEX) L[k] = new Set(LEX[k]);
+const $ = id => document.getElementById(id);
+const clamp = (x,a=0,b=1) => Math.max(a, Math.min(b, x));
+const fmt = ms => { const s = Math.floor(ms/1000); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SENT_END = '.?!…।。？！', CLAUSE_END = ',;:—–،';
+const FR = 100; // envelope frame, ms
+
+/* ================= navigation ================= */
+let screen = 'home', hasResult = false;
+function show(name){
+  screen = name;
+  for (const s of ['home','run','clips','prev','set']) $('s-'+s).hidden = s !== name;
+  const tab = name === 'prev' ? 'clips' : name === 'run' ? 'home' : name;
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-current', String(b.dataset.t === tab)));
+  if (name !== 'prev') stopPlay();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => { if (b.dataset.t === 'clips' && !hasResult) return show('home'); show(b.dataset.t); });
+
+/* ================= state ================= */
+let RELAXED = false, FILE = null, META = null, A = null /* analysis */, CLIPS = [], SEL = -1, CANCEL = false, CAPWORDS = [];
+
+$('pick').onclick = () => $('file').click();
+$('file').onchange = async e => { const f = e.target.files[0]; if (f) await loadFile(f); };
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', async e => { e.preventDefault(); const f = e.dataTransfer?.files?.[0]; if (f && f.type.startsWith('video')) await loadFile(f); });
+
+function homeError(msg){ const el = $('homeerr'); el.textContent = msg; el.hidden = !msg; }
+async function loadFile(f){
+  homeError(''); FILE = f; META = null; $('go').disabled = true;
+  const v = $('av'); if (v.dataset.url) URL.revokeObjectURL(v.dataset.url);
+  const url = URL.createObjectURL(f); v.dataset.url = url; v.src = url;
+  try{
+    await new Promise((res, rej) => { v.onloadedmetadata = res; v.onerror = () => rej(new Error('This browser cannot read that video. Try an MP4 (H.264) or WebM.')); setTimeout(() => rej(new Error('Timed out reading the video header.')), 15000); });
+    if (!isFinite(v.duration) || v.duration < 3) throw new Error('The video is too short or its duration is unreadable.');
+    META = {name: f.name, size: f.size, dur: v.duration*1000, w: v.videoWidth, h: v.videoHeight, url};
+    let thumb = '';
+    try{ v.currentTime = Math.min(1, v.duration/4); await new Promise(r => { v.onseeked = r; setTimeout(r, 3000); }); const cv = document.createElement('canvas'); cv.width = 144; cv.height = 88; cv.getContext('2d').drawImage(v, 0, 0, 144, 88); thumb = cv.toDataURL('image/jpeg', .7); }catch{}
+    const info = $('fileinfo'); info.hidden = false; $('dropempty').hidden = true; $('pick').textContent = 'Change video';
+    info.innerHTML = `${thumb ? `<img alt="" src="${thumb}">` : ''}<div style="min-width:0"><b>${esc(f.name)}</b><span class="note">${fmt(META.dur)} · ${META.w}×${META.h} · ${(f.size/1048576).toFixed(0)} MB</span></div>`;
+    $('st-len').textContent = fmt(META.dur); $('st-res').textContent = META.w + '×' + META.h; $('st-size').textContent = (f.size/1048576).toFixed(0) + ' MB';
+    if (f.size > 700*1048576 || META.dur > 45*60*1000) homeError('Large file: the browser may run out of memory while decoding audio. The Android app handles long videos safely.');
+    $('go').disabled = false;
+  }catch(err){ info_clear(); homeError(err.message); }
+}
+function info_clear(){ $('fileinfo').hidden = true; $('dropempty').hidden = false; }
+
+/* ================= transcript (optional) ================= */
+function parseSubs(text){
+  const words = [];
+  const tm = s => { const m = s.trim().match(/^(?:(\d+):)?(\d+):(\d+)[,.](\d+)/); return m ? (((+(m[1]||0))*60 + +m[2])*60 + +m[3])*1000 + +m[4].padEnd(3,'0').slice(0,3) : null; };
+  for (const b of text.replace(/\r/g,'').split(/\n\s*\n/)){
+    const lines = b.split('\n').filter(Boolean); const i = lines.findIndex(l => l.includes('-->')); if (i < 0) continue;
+    const [a,z] = lines[i].split('-->'); const s = tm(a), e = tm(z.trim().split(/\s+/)[0]); if (s == null || e == null) continue;
+    const toks = lines.slice(i+1).join(' ').replace(/<[^>]+>/g,'').split(/\s+/).filter(Boolean);
+    const total = toks.reduce((n,t)=>n+t.length+1,0); let cur = s;
+    for (const t of toks){ const d = (e-s)*(t.length+1)/total; words.push({t, s: Math.round(cur), e: Math.round(cur+d)}); cur += d; }
+  }
+  return words;
+}
+const cl = w => w.t.trim();
+const capT = (w, st) => st === 'POP' ? cl(w).toUpperCase() : cl(w);
+const endsSentence = w => { const c = cl(w); return !!c && SENT_END.includes(c.at(-1)); };
+const endsClause = w => { const c = cl(w); return !!c && CLAUSE_END.includes(c.at(-1)); };
+const norm = w => cl(w).toLowerCase().replace(/^[.,?!"';:]+|[.,?!"';:]+$/g,'');
+function sentencesOf(words){
+  const out = []; let cur = [];
+  words.forEach((w,i) => { cur.push(w); const nx = words[i+1]; const gap = nx ? nx.s - w.e : Infinity;
+    if (endsSentence(w) || gap >= 900 || cur.length >= 45){ out.push(cur); cur = []; } });
+  if (cur.length) out.push(cur);
+  return out.map(ws => ({s: ws[0].s, e: ws.at(-1).e, words: ws, text: ws.map(cl).join(' '), q: /[?？]$/.test(cl(ws.at(-1)))}));
+}
+
+/* ================= analysis pipeline (real audio + real frames) ================= */
+const STAGES = ['Decoding audio','Transcribing speech','Measuring loudness and speech','Sampling video frames','Finding complete moments'];
+let ST = {};
+function drawStages(i, pct, detail){
+  ST[i] = {pct, detail};
+  $('stages').innerHTML = STAGES.map((n,k) => { const s = ST[k]; const done = s && s.pct >= 1, on = s && !done;
+    return `<div class="st ${done?'done':on?'on':''}"><span class="dot">${done?'✓':''}</span><div style="flex:1;min-width:0"><div style="font-weight:600">${n}</div>${on?`<div class="prog"><i style="width:${Math.round(s.pct*100)}%"></i></div><div class="note">${esc(s.detail||'')}</div>`:''}</div></div>`; }).join('');
+}
+const tick = () => new Promise(r => setTimeout(r, 0));
+class Cancelled extends Error {}
+const chk = () => { if (CANCEL) throw new Cancelled(); };
+
+$('cancel').onclick = () => { CANCEL = true; };
+$('go').onclick = async () => {
+  if (!FILE || !META) return;
+  CANCEL = false; homeError(''); show('run'); $('runfile').textContent = META.name;
+  try{
+    A = await analyze(); hasResult = true; rank();
+    show('clips');
+  }catch(e){
+    show('home'); if (!(e instanceof Cancelled)) homeError(e.message || String(e));
+  }
+};
+
+async function analyze(){
+  const R = {envDb: null, voiced: null, units: [], vis: null, hasAudio: false, dur: META.dur}; ST = {};
+  // 1. decode audio (real PCM)
+  drawStages(0, .1, 'Reading file…'); await tick();
+  let audio = null;
+  try{
+    const buf = await FILE.arrayBuffer(); chk();
+    drawStages(0, .5, 'Decoding…'); await tick();
+    const AC = window.AudioContext || window.webkitAudioContext; const ac = new AC();
+    audio = await ac.decodeAudioData(buf); ac.close();
+  }catch(e){ if (e instanceof Cancelled) throw e; audio = null; }
+  chk();
+  // 1b. automatic speech recognition (local Whisper) -> word timestamps
+  drawStages(0, 1, ''); R.words = []; R.asrError = '';
+  // speech recognition runs while loudness and frames are analysed (they do not depend on each other)
+  const asrP = audio ? transcribe(audio).then(w => ({w}), e => ({e})) : Promise.resolve({e: new Error('No audio track could be decoded from this video.')});
+  chk();
+  // 2. loudness envelope + speech activity
+  if (audio){
+    R.hasAudio = true; drawStages(2, 0, 'Computing loudness per 100 ms…'); await tick();
+    const n = Math.ceil(audio.duration*1000/FR), db = new Float32Array(n), sr = audio.sampleRate, per = Math.round(sr*FR/1000);
+    const chs = []; for (let c = 0; c < audio.numberOfChannels; c++) chs.push(audio.getChannelData(c));
+    for (let i = 0; i < n; i++){
+      let sq = 0, cnt = 0; const a = i*per, b = Math.min(a+per, chs[0].length);
+      for (const ch of chs) for (let k = a; k < b; k += 2){ const v = ch[k]; sq += v*v; cnt++; }
+      db[i] = cnt ? 20*Math.log10(Math.sqrt(sq/cnt) + 1e-7) : -140;
+      if (i % 2000 === 0){ drawStages(2, i/n, ''); await tick(); chk(); }
+    }
+    R.envDb = db;
+    const sorted = Float32Array.from(db).sort(); const pc = p => sorted[Math.floor(p*(sorted.length-1))];
+    R.floor = pc(.1); R.p90 = pc(.9); R.p95 = pc(.95);
+    if (R.p95 - R.floor < 6) { R.hasAudio = false; R.silent = true; }  // effectively no signal
+    else {
+      R.thr = R.floor + Math.max(6, .33*(R.p95 - R.floor));
+      let v = Array.from(db, x => x > R.thr);
+      // close short gaps (<=200ms) and drop blips (<300ms)
+      for (let i = 0; i < v.length; i++) if (!v[i]){ let j = i; while (j < v.length && !v[j]) j++; if (j - i <= 2 && i > 0 && j < v.length){ for (let k = i; k < j; k++) v[k] = true; } i = j; }
+      R.voiced = v;
+      let mean = 0, cnt = 0; for (let i = 0; i < db.length; i++) if (v[i]){ mean += db[i]; cnt++; }
+      mean = cnt ? mean/cnt : R.floor; let sd = 0; for (let i = 0; i < db.length; i++) if (v[i]) sd += (db[i]-mean)**2;
+      R.mean = mean; R.std = Math.max(2, Math.sqrt(sd/Math.max(1,cnt)));
+      // phrases: voiced runs separated by >= 500 ms of non-speech
+      const units = []; let i = 0;
+      while (i < v.length){
+        if (!v[i]){ i++; continue; }
+        let s = i, e = i, gap = 0;
+        for (let j = i; j < v.length; j++){ if (v[j]){ e = j; gap = 0; } else { gap++; if (gap >= 5) break; } }
+        if ((e - s + 1) >= 6) units.push({s: s*FR, e: (e+1)*FR});
+        i = e + 1 + 5;
+      }
+      R.units = units;
+    }
+  }
+  chk();
+  // 3. frames: histogram scene cuts, motion, motion centroid, faces if the browser has the Shape Detection API
+  drawStages(2, 1, '');
+  R.vis = await sampleFrames(drawStages);
+  drawStages(3, 1, '');
+  const asrR = await asrP; chk();
+  if (asrR.e){ if (asrR.e instanceof Cancelled) throw asrR.e; R.asrError = asrR.e.message || String(asrR.e); } else R.words = asrR.w;
+  // If there is no usable audio, units come from scene segments.
+  if (!R.units.length){
+    const cuts = [0, ...R.vis.cuts, META.dur]; const u = [];
+    for (let i = 0; i < cuts.length-1; i++) if (cuts[i+1] - cuts[i] > 1500) u.push({s: cuts[i], e: cuts[i+1]});
+    R.units = u; R.unitsFromScenes = true;
+  }
+  drawStages(4, .3, 'Ranking…'); await tick();
+  return R;
+}
+
+async function sampleFrames(draw){
+  const v = $('av'); const dur = META.dur/1000;
+  const N = Math.floor(clamp(dur/1.0, 20, 300)); const step = dur/N;
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 36; const g = cv.getContext('2d', {willReadFrequently: true});
+  let fd = null; try{ if ('FaceDetector' in window) fd = new window.FaceDetector({fastMode: true, maxDetectedFaces: 2}); }catch{}
+  const hists = [], motion = new Float32Array(N), mx = new Float32Array(N).fill(.5), face = new Float32Array(N), fx = new Float32Array(N).fill(-1), times = [];
+  let prev = null, seekFail = 0;
+  for (let i = 0; i < N; i++){
+    chk(); const t = Math.min(dur - .05, i*step + step/2); times.push(t*1000);
+    try{
+      await new Promise((res, rej) => { const to = setTimeout(() => rej(new Error('seek')), 4000); v.onseeked = () => { clearTimeout(to); res(); }; v.currentTime = t; });
+      g.drawImage(v, 0, 0, 64, 36); const d = g.getImageData(0, 0, 64, 36).data;
+      const h = new Float32Array(16), luma = new Uint8Array(64*36);
+      for (let p = 0, k = 0; p < d.length; p += 4, k++){ const y = (d[p]*.299 + d[p+1]*.587 + d[p+2]*.114)|0; luma[k] = y; h[y>>4]++; }
+      for (let k = 0; k < 16; k++) h[k] /= 2304; hists.push(h);
+      if (prev){ let s = 0; const col = new Float32Array(64); for (let k = 0; k < luma.length; k++){ const df = Math.abs(luma[k]-prev[k]); s += df; col[k%64] += df; }
+        motion[i] = s/luma.length/255; let cs = 0, cw = 0; for (let x = 0; x < 64; x++){ cs += col[x]*x; cw += col[x]; } if (cw > 64*4) mx[i] = cs/cw/63; }
+      prev = luma;
+      if (fd){ try{ const f = await fd.detect(cv); face[i] = f.length ? 1 : 0; if (f.length){ const b = f.sort((a,b)=>b.boundingBox.width-a.boundingBox.width)[0].boundingBox; fx[i] = (b.x + b.width/2)/64; } }catch{ fd = null; } }
+    }catch(e){ if (e instanceof Cancelled) throw e; seekFail++; hists.push(hists.at(-1) || new Float32Array(16)); if (seekFail > N/4) throw new Error('Could not read frames from this video in the browser.'); }
+    if (i % 4 === 0){ draw(3, i/N, `Frame ${i+1} of ${N}`); await tick(); }
+  }
+  // scene cuts (adaptive, same rule as the app's SceneDetector)
+  const dist = hists.map((h,i) => i ? h.reduce((s,x,k)=>s+Math.abs(x-hists[i-1][k]),0)/2 : 0);
+  const cuts = []; const minD = step > 2 ? .5 : .35;
+  for (let i = 1; i < dist.length; i++){ const from = Math.max(1, i-12); let m = 0, n = 0; for (let k = from; k < i; k++){ m += dist[k]; n++; } m = n ? m/n : 0;
+    let vr = 0; for (let k = from; k < i; k++) vr += (dist[k]-m)**2; const sd = n > 1 ? Math.sqrt(vr/n) : 0; if (dist[i] >= minD && dist[i] > m + 3*sd) cuts.push(times[i]); }
+  // framing track: face centre if available, else motion centroid; smoothed with a dead zone and speed limit
+  const raw = Array.from({length: N}, (_,i) => fx[i] >= 0 ? fx[i] : (motion[i] > .01 ? mx[i] : -1));
+  const track = []; let cur = .5;
+  for (let i = 0; i < N; i++){ const tgt = raw[i] >= 0 ? raw[i] : cur; if (Math.abs(tgt-cur) > .08) cur += clamp(tgt-cur, -.04, .04); track.push(cur); }
+  const mSorted = Float32Array.from(motion).sort();
+  return {N, step: step*1000, times, motion, motionP90: mSorted[Math.floor(.9*(N-1))] || .01, face, faceAvail: !!fd || face.some(x=>x>0), track, cuts, hasMotionTrack: motion.some(x=>x>.01)};
+}
+
+/* ================= scoring ================= */
+function cfgNow(){ return {min: +$('min').value*1000, tgt: +$('tgt').value*1000, max: +$('max').value*1000, n: +$('n').value}; }
+
+function avFeatures(s, e, R, units, ui){
+  const a = Math.floor(s/FR), b = Math.max(a+1, Math.floor(e/FR)); const f = {}; const reasons = [];
+  if (R.hasAudio){
+    const db = R.envDb; let sum = 0, vc = 0, peaks = 0, vs = 0, vq = 0; const n = Math.min(b, db.length) - a;
+    for (let i = a; i < Math.min(b, db.length); i++){ sum += db[i]; if (R.voiced[i]){ vc++; vs += db[i]; vq += db[i]*db[i]; } if (db[i] > R.p90) peaks++; }
+    const mean = sum/Math.max(1,n), vstd = vc > 3 ? Math.sqrt(Math.max(0, vq/vc - (vs/vc)**2)) : 0;
+    const z = (mean - R.mean)/R.std;
+    f.energy = clamp(.45*clamp(.5 + z*.45) + .3*clamp((peaks/Math.max(1,n))/.2) + .25*clamp(vstd/8));
+    if (f.energy > .62) reasons.push('high-energy delivery');
+    else if (vstd > 6) reasons.push('expressive dynamics');
+    let om = 0, oc = 0; for (let i = a; i < Math.min(a+30, db.length); i++){ om += db[i]; oc++; } om = om/Math.max(1,oc);
+    let pre = 0; for (let i = a-1; i >= 0 && !R.voiced[i]; i--) pre++; let post = 0; for (let i = b; i < R.voiced.length && !R.voiced[i]; i++) post++;
+    const atStart = a === 0, atEnd = b >= R.voiced.length;
+    f.hookA = clamp(.35 + clamp((om - R.mean)/R.std*.3, -.3, .35) + (pre >= 7 || atStart ? .2 : 0) + (pre >= 15 ? .1 : 0));
+    if (pre >= 7 && om > R.mean) reasons.push('strong opening after a pause');
+    f.complete = clamp((post >= 5 || atEnd ? .45 : post >= 3 ? .25 : 0) + (pre >= 5 || atStart ? .35 : pre >= 3 ? .2 : 0) + (units > 1 ? .2 : .1));
+    if (f.complete > .85) reasons.push('clean start and end on pauses');
+    const vf = vc/Math.max(1,n); let pace = vf >= .6 && vf <= .95 ? 1 : vf >= .45 ? .6 : .2;
+    let run = 0, maxRun = 0; for (let i = a; i < Math.min(b, db.length); i++){ if (!R.voiced[i]){ run++; maxRun = Math.max(maxRun, run); } else run = 0; }
+    if (maxRun*FR > 2500){ pace *= .6; reasons.push('long pause inside'); } else if (pace === 1) reasons.push('steady speech, little dead air');
+    f.pacing = pace;
+  }
+  const V = R.vis; const ia = clamp(Math.floor(s/V.step), 0, V.N-1), ib = clamp(Math.floor(e/V.step), ia, V.N-1);
+  let m = 0, fc = 0; for (let i = ia; i <= ib; i++){ m += V.motion[i]; fc += V.face[i]; } const k = ib-ia+1; m /= k; fc /= k;
+  const cuts = R.vis.cuts.filter(t => t >= s && t <= e).length, cpm = cuts/((e-s)/60000);
+  const parts = []; parts.push([.3, clamp(m/(V.motionP90*1.2))]); parts.push([.2, cpm <= 20 ? .5 + Math.min(.5, cpm/40) : .5]);
+  if (V.faceAvail){ parts.push([.5, fc]); if (fc > .6) reasons.push('speaker visible'); }
+  f.visual = parts.reduce((x,p)=>x+p[0]*p[1],0)/parts.reduce((x,p)=>x+p[0],0);
+  if (m > V.motionP90*.9) reasons.push('active visuals');
+  if (cuts >= 2) reasons.push(`${cuts} scene changes`);
+  return {f, reasons};
+}
+
+function textFeatures(span, cfg){
+  const words = span.flatMap(s => s.words), lower = words.map(norm), r = [];
+  const first = span[0], ft = first.text.toLowerCase(); let hook = 0;
+  if (LEX.hookPhrases.some(h => ft.includes(h))){ hook += .55; r.push('opens with a hook phrase'); }
+  if (first.q){ hook += .3; r.push('opens with a question'); }
+  if (first.words.length >= 4 && first.words.length <= 16) hook += .15; else if (first.words.length > 28) hook -= .15;
+  if (first.words.some(w => /\d/.test(w.t))) hook += .1; if (L.fillers.has(lower[0])) hook -= .25; hook = clamp(hook);
+  const content = lower.filter(w => !L.stopwords.has(w) && w.length > 2), rich = content.length ? new Set(content).size/content.length : 0;
+  const hits = lower.filter(w => L.interestWords.has(w)).length, nums = words.filter(w => /\d/.test(w.t)).length;
+  const interest = clamp(Math.min(1, hits*6/words.length)*.5 + rich*.35 + Math.min(1, nums/3)*.15); if (hits >= 2) r.push('dense with informative words');
+  let ctx = 1; if (L.weakStarts.has(lower[0])){ ctx -= .4; r.push('starts mid-thought'); } if (!endsSentence(span.at(-1).words.at(-1))) ctx -= .35; ctx = clamp(ctx);
+  const emo = lower.filter(w => L.emotionWords.has(w)).length, excl = words.filter(w => cl(w).endsWith('!')).length;
+  const emotion = clamp(Math.min(1, emo*5/words.length)*.65 + Math.min(1, excl/3)*.35); if (emo >= 2 || excl >= 2) r.push('emotional language');
+  const tail = span.slice(-2).map(s => s.text.toLowerCase()).join(' '); let payoff = .35;
+  if (LEX.payoffPhrases.some(p => tail.includes(p))){ payoff += .45; r.push('ends with a conclusion'); }
+  if (span.slice(0,2).some(s => s.q) && span.length >= 3){ payoff += .2; r.push('question is answered'); } if (span.at(-1).q) payoff -= .3;
+  return {hook, interest, ctx, emotion, payoff: clamp(payoff), reasons: r};
+}
+
+const DANGLING = new Set(['it','that','this','those','these','he','she','they','him','her','them','there','वो','वह','यह','ये','उसने','उन्होंने','उसे','वहाँ']);
+function completeSpan(units, i0, i1, cfg, hasText){
+  const LIM = cfg.max + 8000; const gapAfter = k => units[k+1].s - units[k].e, gapBefore = k => units[k].s - units[k-1].e;
+  if (hasText){
+    let g = 0;
+    while (i1 < units.length-1 && g++ < 4){                                  // finish the thought
+      const last = units[i1]; const terminal = endsSentence(last.words.at(-1));
+      if (terminal && last.words.length > 6 && !last.q) break;               // full sentence, not a dangling short one or an unanswered question
+      if (gapAfter(i1) > 1200 || units[i1+1].e - units[i0].s > LIM) break;
+      i1++;
+    }
+    g = 0;
+    while (i0 > 0 && g++ < 2){                                               // add the missing context
+      const w0 = norm(units[i0].words[0]); if (!(L.weakStarts.has(w0) || DANGLING.has(w0))) break;
+      if (gapBefore(i0) > 1500 || units[i1].e - units[i0-1].s > LIM) break; i0--;
+    }
+    while (i1 > i0 && !endsSentence(units[i1].words.at(-1)) && gapAfter(i1) < 400 && units[i1-1].e - units[i0].s >= cfg.min) i1--;  // never stop mid-sentence if a clean end is available
+  }
+  return [i0, i1];
+}
+function rank(){
+  if (!A) return; const cfg = cfgNow(); const R = A;
+  CAPWORDS = R.words || [];
+  const hasText = CAPWORDS.length > 4;
+  const units = hasText ? sentencesOf(CAPWORDS) : R.units;
+  let cands = [], relaxed = false;
+  for (let pass = 0; pass < 2 && !cands.length; pass++){
+  const minMs = pass ? cfg.min/2 : cfg.min; relaxed = pass === 1;
+  for (let i = 0; i < units.length; i++) for (let j = i; j < units.length; j++){
+    const s = units[i].s, e = units[j].e, dur = e - s; if (dur > cfg.max) break;
+    if (j > i && units[j].s - units[j-1].e > 2500) break;
+    const gapAfter = j+1 < units.length ? units[j+1].s - units[j].e : Infinity;
+    if (dur < minMs || (!hasText && gapAfter < 400)) continue;
+    const span = units.slice(i, j+1); const {f, reasons} = avFeatures(s, e, R, span.length, units);
+    const B = {}; let rs = reasons.slice();
+    const sigma = (cfg.max - cfg.min)/2.5; B.duration = Math.exp(-((dur-cfg.tgt)**2)/(2*sigma*sigma));
+    if (hasText){ const T = textFeatures(span, cfg); rs = T.reasons.concat(rs);
+      B.hook = R.hasAudio ? (T.hook*.65 + f.hookA*.35) : T.hook; B.interest = T.interest; B.completeness = R.hasAudio ? (T.ctx*.65 + f.complete*.35) : T.ctx;
+      B.emotion = R.hasAudio ? (T.emotion*.4 + f.energy*.6) : T.emotion; B.payoff = T.payoff; }
+    else if (R.hasAudio){ B.hook = f.hookA; B.completeness = f.complete; B.emotion = f.energy; }
+    if (R.hasAudio) B.pacing = f.pacing; B.visual = f.visual;
+    const W = {hook:.18, interest:.14, completeness:.16, emotion:.18, payoff:.10, duration:.06, pacing:.10, visual:.14};
+    let raw = 0, tot = 0; for (const k in B){ raw += B[k]*W[k]; tot += W[k]; }
+    cands.push({s, e, span, B, raw: raw/tot, reasons: [...new Set(rs)], hasText});
+  }
+  }
+  RELAXED = relaxed;
+  if (!cands.length){ CLIPS = []; renderClips(); return; }
+  const lo = Math.min(...cands.map(c=>c.raw)), hi = Math.max(...cands.map(c=>c.raw));
+  cands.forEach(c => c.score = hi-lo > 1e-9 ? (c.raw-lo)/(hi-lo)*100 : 50);
+  const iou = (a,b) => { const i = Math.max(0, Math.min(a.e,b.e)-Math.max(a.s,b.s)); const u = (a.e-a.s)+(b.e-b.s)-i; return u ? i/u : 0; };
+  const picked = [];
+  for (const c of cands.sort((a,b)=>b.score-a.score)){ if (picked.length >= cfg.n) break; if (!picked.some(p => iou(p,c) > .15)) picked.push(c); }
+  // boundary completion: finish the thought, add missing context, cut only inside silence, never mid-word
+  const done = [];
+  for (const c of picked){
+    let i0 = units.findIndex(u => u.s === c.span[0].s), i1 = units.findIndex(u => u.e === c.span.at(-1).e);
+    [i0, i1] = completeSpan(units, i0, i1, cfg, hasText);
+    const prevE = i0 > 0 ? units[i0-1].e : 0, nextS = units[i1+1]?.s ?? META.dur;
+    const sp = units.slice(i0, i1+1), s0 = sp[0].s, e0 = sp.at(-1).e, lastU = sp.at(-1);
+    const terminal = hasText ? endsSentence(lastU.words.at(-1)) : false, pause = (nextS - e0) >= 400 || i1 === units.length-1;
+    const cl2 = {...c, span: sp, s: Math.max(0, Math.max(s0 - 300, (prevE + s0)/2)), e: Math.min(META.dur, Math.min(e0 + 450, (e0 + nextS)/2)), endKind: terminal ? 'sentence' : pause ? 'pause' : 'open'};
+    if (!done.some(p => iou(p, cl2) > .15)) done.push(cl2);
+  }
+  CLIPS = done.sort((a,b)=>b.score-a.score);
+  renderClips();
+}
+$('rerank').onclick = () => { if (A){ rank(); show('clips'); } };
+
+/* ================= clips list ================= */
+const BL = {hook:'Hook', interest:'Interest', completeness:'Complete', emotion:'Energy', payoff:'Payoff', duration:'Length', pacing:'Pacing', visual:'Visual'};
+function wave(c){
+  if (!A.envDb) return ''; const bars = 56, a = c.s/FR, b = c.e/FR, lo = A.floor, hi = A.p95; let out = '';
+  for (let i = 0; i < bars; i++){ const i0 = Math.floor(a + (b-a)*i/bars), i1 = Math.max(i0+1, Math.floor(a + (b-a)*(i+1)/bars)); let m = -140; for (let k = i0; k < i1 && k < A.envDb.length; k++) m = Math.max(m, A.envDb[k]);
+    const h = clamp((m-lo)/(hi-lo))*30 + 2; out += `<rect x="${i*5}" y="${17-h/2}" width="3" height="${h}" rx="1.5" fill="#e8e8ec"/>`; }
+  return `<svg class="wave" viewBox="0 0 280 34" preserveAspectRatio="none" aria-hidden="true">${out}</svg>`;
+}
+function renderClips(){
+  $('clipsmeta').textContent = `${META.name} · ${fmt(META.dur)} · ${CAPWORDS.length>4 ? `${CAPWORDS.length} words transcribed · ranked from what is said, how it sounds and the visuals` : A.hasAudio ? 'transcription unavailable · ranked from audio energy, pauses and visuals' : 'no usable audio · ranked from visuals only'}${RELAXED ? ' · no stretch met the minimum length, so the limit was halved' : ''}`;
+  const warn = A.asrError ? `<div class="err"><b>Speech recognition did not run.</b> ${esc(A.asrError)}<br><span class="note">Clips below use audio and visuals only, so they may start or end less cleanly. Open this page in your phone's own browser (Chrome) with internet for the first run to enable transcription.</span></div>` : '';
+  $('sc-n').textContent = CLIPS.length; $('sc-top').textContent = CLIPS.length ? Math.round(CLIPS[0].score) : '—'; $('sc-words').textContent = CAPWORDS.length;
+  if (!CLIPS.length){ $('clips').innerHTML = warn + '<div class="panel">No clip fits these limits. Lower the minimum length in Settings and press Re-rank.</div>'; return; }
+  const endTag = c => c.endKind === 'sentence' ? '<span class="tag g">Ends on a full sentence</span>' : c.endKind === 'pause' ? '<span class="tag g">Ends on a natural pause</span>' : '<span class="tag">Ending not verified</span>';
+  $('clips').innerHTML = warn + CLIPS.map((c,i) => `<button class="clip" data-i="${i}"><div class="rk"><b>${Math.round(c.score)}</b><small>#${i+1}</small></div><div style="min-width:0">
+    <div class="tc">${fmt(c.s)}–${fmt(c.e)} · ${Math.round((c.e-c.s)/1000)}s</div>${wave(c)}
+    <p class="ttl">${esc(clipMeta(c,i).title)}</p>
+    ${c.hasText ? `<p class="txt">${esc(c.span.map(s=>s.text).join(' ').slice(0,150))}${c.span.map(s=>s.text).join(' ').length > 150 ? '…' : ''}</p>` : ''}
+    <div class="chips">${endTag(c)}${c.reasons.slice(0,4).map(r=>`<span class="tag">${esc(r)}</span>`).join('')}</div></div></button>`).join('');
+}
+$('clips').addEventListener('click', e => { const b = e.target.closest('.clip'); if (b) openClip(+b.dataset.i); });
+
+/* ================= preview ================= */
+const STOPX = new Set(['this','that','with','have','from','they','them','were','what','when','your','will','just','like','about','there','their','would','could','really','because','going','know','think','then','than','been','into','also','very','some','more','here','these','those','thing','things','which','where','does','dont','don\'t','it\'s','i\'m','that\'s']);
+function clipMeta(c, i){
+  if (!c.hasText) return {title: `Best moment #${i+1}`, tags: ['#shorts', '#clip']};
+  const ss = c.span.map(s => s.text.trim()).filter(Boolean); const wc = s => s.split(/\s+/).length;
+  const hooky = s => /\?$/.test(s) || LEX.hookPhrases.some(p => s.toLowerCase().includes(p)) || /\d/.test(s);
+  let pick = ss.slice(0,3).find(s => hooky(s) && wc(s) >= 4 && wc(s) <= 14) || ss.slice(0,3).find(s => wc(s) >= 4 && wc(s) <= 12);
+  if (!pick){ const ws = ss[0].split(/\s+/); pick = ws.slice(0, 10).join(' ') + (ws.length > 10 ? '…' : ''); }
+  let title = pick.replace(/[.\s]+$/, '').replace(/^\w/, m => m.toUpperCase());
+  { const ws = title.split(' '); const key = w => { const n = w.toLowerCase().replace(/[^a-z0-9']/g,''); return L.emotionWords.has(n) || L.interestWords.has(n) || /\d/.test(n); };
+    let idx = ws.map((w,k) => key(w) ? k : -1).filter(k => k >= 0).slice(0,2); if (!idx.length){ let b = -1, bl = 5; ws.forEach((w,k) => { const l = w.replace(/[^a-z]/gi,'').length; if (k > 0 && l > bl){ bl = l; b = k; } }); if (b >= 0) idx = [b]; }
+    idx.forEach(k => ws[k] = ws[k].toUpperCase()); title = ws.join(' '); }
+  const low = title.toLowerCase(); const EMO = [[/\?$/,'🤔'],[/money|dollar|million|billion|\$|price|rich|cost/,'💰'],[/mistake|wrong|fail|never|worst|lost|broke/,'😳'],[/love|best|amazing|incredible|win|secret|truth/,'🔥'],[/crazy|insane|shock|wild|unbelievable/,'🤯'],[/funny|laugh|joke/,'😂']];
+  title += ' ' + ((EMO.find(e => e[0].test(low)) || [0,'🔥'])[1]);
+  const freq = new Map(); for (const s of ss) for (const w of s.toLowerCase().replace(/[^a-z0-9' ]/g,' ').split(/\s+/)){ if (w.length < 4 || L.stopwords.has(w) || L.fillers.has(w) || STOPX.has(w)) continue; freq.set(w, (freq.get(w)||0)+1); }
+  const tags = [...freq.entries()].sort((a,b) => b[1]-a[1] || b[0].length-a[0].length).slice(0,5).map(e => '#'+e[0].replace(/'/g,'')); tags.push('#shorts');
+  return {title, tags};
+}
+const hookOn = () => $('hookt').value === 'on', fxOn = () => $('fx').value === 'on';
+const HOOK_MS = 1e9; // title card stays for the whole clip, like a reel headline
+const PV = $('pv'); let playing = false, PAGES = [];
+const PARAMS = {POP:[3,14,1], CLASSIC:[8,22,2], MINIMAL:[10,26,2]};
+function buildPages(words, style){
+  const [mw, mc, ml] = PARAMS[style]; const pages = []; let cur = [];
+  words.forEach((w,i) => { cur.push(w); const nx = words[i+1]; const gap = nx ? nx.s - w.e : Infinity; const chars = cur.reduce((n,x)=>n+cl(x).length+1,0);
+    if (cur.length >= mw || chars >= mc*ml-2 || ((endsSentence(w)||endsClause(w)) && cur.length >= Math.max(2, mw>>1)) || gap >= 700){ pages.push(cur); cur = []; } });
+  if (cur.length) pages.push(cur);
+  return pages.map((ws,i) => ({s: ws[0].s, e: Math.max(ws.at(-1).e, Math.min(ws.at(-1).e+250, pages[i+1]?.[0].s ?? Infinity)), words: ws}));
+}
+function openClip(i){
+  SEL = i; const c = CLIPS[i]; show('prev');
+  if (PV.dataset.src !== META.url){ PV.src = META.url; PV.dataset.src = META.url; }
+  const words = CAPWORDS.filter(w => w.e > c.s && w.s < c.e).map(w => ({t: w.t, s: w.s - c.s, e: w.e - c.s}));
+  PAGES = buildPages(words, $('style').value);
+  $('srtbtn').hidden = !PAGES.length; $('srtout').hidden = true;
+  $('prevnote').textContent = PAGES.length ? '' : 'No speech was transcribed for this clip, so there are no captions.'; $('savenote').textContent = ''; $('saveprog').hidden = true;
+  $('sp-score').textContent = Math.round(c.score); $('sp-len').textContent = Math.round((c.e-c.s)/1000) + 's'; { const e = $('sp-end'); e.textContent = c.endKind === 'sentence' ? 'Sentence' : c.endKind === 'pause' ? 'Pause' : 'Unverified'; e.className = c.endKind === 'open' ? 'bad' : 'good'; }
+  { const m = clipMeta(c, i); c.meta = m; $('metaout').textContent = m.title + '\n' + m.tags.join(' '); }
+  $('prevbars').innerHTML = `<div class="bars">${Object.keys(c.B).map(k => `<div class="bar"><span>${BL[k]}</span><i><b style="width:${Math.round(c.B[k]*100)}%"></b></i></div>`).join('')}</div>`;
+  const go = () => { PV.currentTime = c.s/1000; draw(0); }; if (PV.readyState >= 1) go(); else PV.onloadedmetadata = go;
+}
+function framingX(tMs){
+  const V = A.vis; if ($('frame').value === 'center' || !V.track.length) return .5;
+  const f = clamp(tMs/V.step - .5, 0, V.N-1), i = Math.floor(f), j = Math.min(V.N-1, i+1); return V.track[i] + (V.track[j]-V.track[i])*(f-i);
+}
+const zoomAt = (t, len) => 1 + .07*Math.min(1, Math.max(0, t/len)) + (t < 400 ? .09*(1 - Math.max(0,t)/400) : 0);
+function draw(t){
+  const c = CLIPS[SEL]; if (!c) return; const len = c.e - c.s;
+  $('seek').value = Math.round(t/len*1000); $('tnow').textContent = fmt(t);
+  PV.style.objectPosition = (framingX(c.s + t)*100).toFixed(1) + '% 50%';
+  const z = fxOn() ? zoomAt(t, len) : 1; PV.style.transform = z === 1 ? '' : `scale(${z.toFixed(4)})`;
+  const hk = $('hook'); if (c.meta && hookOn() && t < HOOK_MS){ hk.textContent = c.meta.title; hk.classList.toggle('on', t < HOOK_MS - 300); } else hk.classList.remove('on');
+  $('fxbar').style.width = fxOn() ? (t/len*100).toFixed(1) + '%' : '0';
+  const p = PAGES.find(p => t >= p.s && t < p.e); const cap = $('cap'); cap.className = 'cap ' + $('style').value.toLowerCase() + (fxOn() ? ' fx' : '');
+  if (!p){ cap.innerHTML = ''; return; } let act = -1; p.words.forEach((w,i) => { if (w.s <= t) act = i; });
+  cap.innerHTML = p.words.map((w,i) => `<span class="${$('style').value !== 'CLASSIC' && i === act ? 'on' : ''}">${esc(capT(w, $('style').value))}</span>`).join(' ');
+}
+function loop(){ if (!playing) return; const c = CLIPS[SEL]; const t = PV.currentTime*1000 - c.s; if (t >= c.e - c.s - 20){ PV.currentTime = c.s/1000; } draw(Math.max(0, t)); requestAnimationFrame(loop); }
+function startPlay(){ PV.muted = false; PV.play().then(() => { playing = true; $('play').textContent = 'Pause'; requestAnimationFrame(loop); }).catch(() => {}); }
+function stopPlay(){ playing = false; try{ PV.pause(); }catch{} $('play').textContent = 'Play'; }
+$('play').onclick = () => playing ? stopPlay() : startPlay();
+$('seek').oninput = e => { const c = CLIPS[SEL]; const t = e.target.value/1000*(c.e-c.s); PV.currentTime = (c.s+t)/1000; draw(t); };
+$('style').onchange = () => { if (SEL >= 0){ const c = CLIPS[SEL]; PAGES = buildPages(CAPWORDS.filter(w => w.e > c.s && w.s < c.e).map(w => ({t:w.t, s:w.s-c.s, e:w.e-c.s})), $('style').value); draw(PV.currentTime*1000 - c.s); } };
+$('frame').onchange = () => draw(PV.currentTime*1000 - CLIPS[SEL].s);
+$('hookt').onchange = $('fx').onchange = () => { if (SEL >= 0) draw(Math.max(0, PV.currentTime*1000 - CLIPS[SEL].s)); };
+$('copymeta').onclick = async () => { const t = $('metaout').textContent; try{ await navigator.clipboard.writeText(t); $('copymeta').textContent = 'Copied'; }catch{ $('copymeta').textContent = 'Select the text above to copy'; } setTimeout(() => $('copymeta').textContent = 'Copy title and tags', 1800); };
+$('back').onclick = () => show('clips');
+$('srtbtn').onclick = () => { const T = ms => { const s = Math.floor(ms/1000); return `00:${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')},${String(Math.round(ms%1000)).padStart(3,'0')}`; };
+  $('srtout').textContent = PAGES.map((p,i) => `${i+1}\n${T(p.s)} --> ${T(p.e)}\n${p.words.map(cl).join(' ')}\n`).join('\n'); $('srtout').hidden = false; };
+
+/* ================= speech recognition: Whisper running locally via Transformers.js ================= */
+const MODELS = {fast: 'onnx-community/whisper-tiny_timestamped', balanced: 'onnx-community/whisper-base_timestamped'}, TJS = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0/+esm';
+const ASRS = {};
+function chip(id, state, text){ const c = $(id); c.className = 'chip ' + state; $(id + 'T').textContent = text; }
+chip('chipDev', '', navigator.gpu ? 'GPU' : 'CPU');
+async function loadAsr(onProg){
+  const mode = $('mode').value || 'balanced', MODEL = MODELS[mode];
+  if (ASRS[mode]) return ASRS[mode];
+  if (window.__asrStub) return (ASRS[mode] = window.__asrStub);
+  chip('chipModel', '', 'Speech: loading');
+  const T = await import(TJS).catch(e => { throw new Error('Could not load the speech library (offline or blocked): ' + (e.message||e)); });
+  T.env.allowLocalModels = false; T.env.useBrowserCache = true;
+  const files = {}; const cb = p => { if (p.status === 'progress' && p.total){ files[p.file] = [p.loaded, p.total]; let l = 0, t = 0; for (const k in files){ l += files[k][0]; t += files[k][1]; } onProg(t ? l/t : 0, `Downloading speech model ${(l/1048576).toFixed(0)} / ${(t/1048576).toFixed(0)} MB`); } };
+  const attempts = []; if (navigator.gpu) attempts.push({device: 'webgpu', dtype: {encoder_model: 'fp16', decoder_model_merged: 'q4f16'}});
+  attempts.push({device: 'wasm', dtype: 'q8'}); attempts.push({device: 'wasm'});
+  let last;
+  for (const opt of attempts){ try{ ASRS[mode] = await T.pipeline('automatic-speech-recognition', MODEL, {...opt, progress_callback: cb}); chip('chipModel', 'ok', 'Speech: ready'); return ASRS[mode]; }catch(e){ last = e; } }
+  chip('chipModel', 'bad', 'Speech: failed'); throw new Error('Could not load the speech model: ' + (last?.message || last));
+}
+function toMono16k(audio){
+  const oc = new OfflineAudioContext(1, Math.ceil(audio.duration*16000), 16000); const src = oc.createBufferSource(); src.buffer = audio; src.connect(oc.destination); src.start();
+  return oc.startRendering().then(b => b.getChannelData(0));
+}
+/* ~30 s windows cut at the quietest 100 ms frame near each boundary so words are not split */
+function planChunks(pcm, sr = 16000, win = 30, search = 5){
+  const out = []; let start = 0; const fr = sr/10;
+  while (start < pcm.length){
+    let end = Math.min(pcm.length, start + win*sr);
+    if (end < pcm.length){ let best = end, bv = Infinity; for (let f = end - search*sr; f <= end - fr; f += fr){ let s = 0; for (let k = f; k < f+fr; k += 8) s += pcm[k]*pcm[k]; if (s < bv){ bv = s; best = f + fr/2; } } if (best > start + sr*10) end = Math.floor(best); }
+    out.push([start, end]); start = end;
+  }
+  return out;
+}
+const HALLU = /(thanks for watching|thank you for watching|please subscribe|subtitles by|amara\.org)/i;
+async function transcribe(audio){
+  const lang = $('lang').value || null; drawStages(1, 0, 'Preparing…'); await tick();
+  const asr = await loadAsr((p, d) => drawStages(1, p*.5, d)); chk();
+  const pcm = await toMono16k(audio); chk();
+  const chunks = planChunks(pcm); const words = [];
+  for (let ci = 0; ci < chunks.length; ci++){
+    chk(); const [a, b] = chunks[ci]; const part = pcm.subarray(a, b);
+    let sq = 0; for (let k = 0; k < part.length; k += 8) sq += part[k]*part[k]; if (Math.sqrt(sq/(part.length/8)) < .002) continue;  // silence: skip, avoids invented text
+    drawStages(1, .5 + .5*ci/chunks.length, `Listening… ${fmt(a/16*1)} of ${fmt(pcm.length/16)}`); await tick();
+    window.__asrOffsetMs = a/16;
+    const out = await asr(part, {return_timestamps: 'word', language: lang, task: 'transcribe'});
+    if (HALLU.test(out.text || '') && (out.text||'').split(/\s+/).length < 10) continue;
+    for (const c of (out.chunks || [])){ const t = (c.text || '').trim(); if (!t || /^[\[(*♪]/.test(t)) continue;
+      const s = a/16 + (c.timestamp[0] ?? 0)*1000; let e = a/16 + (c.timestamp[1] ?? (c.timestamp[0]+.3))*1000; if (!(e > s)) e = s + 250; words.push({t, s: Math.round(s), e: Math.round(e)}); }
+  }
+  // clean: monotone times, drop 3+ repeated words (decoder loops)
+  const out = []; let run = 0, prevE = 0;
+  for (const w of words){ const p = out.at(-1); run = p && p.t.toLowerCase() === w.t.toLowerCase() ? run + 1 : 0; if (run >= 3) continue; const s = Math.max(w.s, prevE); const e = Math.max(w.e, s + 30); out.push({t: w.t, s, e}); prevE = e; }
+  drawStages(1, 1, ''); if (out.length < 5) throw new Error('No speech could be recognised in this video.');
+  return out;
+}
+
+/* ================= export: real 9:16 file with captions + audio (recorded from a canvas) ================= */
+function drawCaptionCanvas(g, page, t, W, H){
+  if (!page) return; const style = $('style').value; let act = -1; page.words.forEach((w,i) => { if (w.s <= t) act = i; });
+  const size = H*(style === 'POP' ? .052 : style === 'CLASSIC' ? .036 : .03); g.font = `${style === 'POP' ? 800 : 600} ${size}px Inter, Arial, sans-serif`; g.textBaseline = 'middle'; g.lineJoin = 'round';
+  const lines = []; const maxW = W*.88; let cur = [], cw = 0;
+  page.words.forEach((w,i) => { const tw = g.measureText(capT(w, style)).width + size*.34; if (cur.length && cw + tw > maxW){ lines.push(cur); cur = []; cw = 0; } cur.push([w,i,tw]); cw += tw; }); if (cur.length) lines.push(cur);
+  let y = H*.72 - (lines.length-1)*size*.65;
+  for (const ln of lines){ let x = (W - ln.reduce((n,p)=>n+p[2],0))/2; for (const [w,i,tw] of ln){ const txt = capT(w, style); g.lineWidth = size*.2; g.strokeStyle = '#000'; const on = style !== 'CLASSIC' && i === act; g.save(); if (on && fxOn()){ const cxw = x + g.measureText(txt).width/2; g.translate(cxw, y); g.scale(1.14, 1.14); g.translate(-cxw, -y); } g.strokeText(txt, x, y); g.fillStyle = on ? '#ffe500' : '#fff'; g.fillText(txt, x, y); g.restore(); x += tw; } y += size*1.25; }
+}
+function drawHookCanvas(g, title, t, W, H){
+  if (t >= HOOK_MS) return; const a = Math.min(1, Math.max(0, (HOOK_MS - t)/300)); const size = H*.036; g.save(); g.globalAlpha = a; g.font = `700 ${size}px Inter, Arial, sans-serif`; g.textBaseline = 'middle'; g.textAlign = 'center';
+  const maxW = W*.78, words = title.split(' '), lines = []; let cur = '';
+  for (const w of words){ const tr = cur ? cur + ' ' + w : w; if (cur && g.measureText(tr).width > maxW){ lines.push(cur); cur = w; } else cur = tr; } lines.push(cur);
+  const lh = size*1.25, bw = Math.min(W*.86, Math.max(...lines.map(l => g.measureText(l).width)) + size*1.6), bh = lines.length*lh + size*.9, x = (W - bw)/2, y = H*.045;
+  g.fillStyle = '#fff'; g.beginPath(); g.roundRect(x, y, bw, bh, size*.75); g.fill(); g.fillStyle = '#0a0a0b'; lines.forEach((l,i) => g.fillText(l, W/2, y + size*.45 + lh*(i+.5))); g.restore();
+}
+let EXPORTING = false;
+$('save').onclick = async () => {
+  if (EXPORTING || SEL < 0) return; const c = CLIPS[SEL]; EXPORTING = true; stopPlay();
+  const note = $('savenote'), pr = $('saveprog'); pr.hidden = false; pr.firstElementChild.style.width = '0%';
+  try{
+    if (typeof MediaRecorder === 'undefined') throw new Error('This browser cannot record video.');
+    const W = 540, H = 960, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+    const v = document.createElement('video'); v.src = META.url; v.playsInline = true; await new Promise((r,j) => { v.onloadedmetadata = r; v.onerror = () => j(new Error('Could not reopen the video.')); });
+    const ac = new (window.AudioContext || window.webkitAudioContext)(); const ms = ac.createMediaElementSource(v), dest = ac.createMediaStreamDestination(), gn = ac.createGain(); ms.connect(gn); gn.connect(dest);
+    const stream = new MediaStream([...cv.captureStream(30).getVideoTracks(), ...dest.stream.getAudioTracks()]);
+    const mime = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(m => MediaRecorder.isTypeSupported(m));
+    if (!mime) throw new Error('No supported recording format in this browser.');
+    const rec = new MediaRecorder(stream, {mimeType: mime, videoBitsPerSecond: 6e6, audioBitsPerSecond: 128e3}); const parts = []; rec.ondataavailable = e => e.data.size && parts.push(e.data);
+    const words = CAPWORDS.filter(w => w.e > c.s && w.s < c.e).map(w => ({t: w.t, s: w.s - c.s, e: w.e - c.s})); const pages = buildPages(words, $('style').value);
+    v.currentTime = c.s/1000; await new Promise(r => { v.onseeked = r; }); await ac.resume();
+    const done = new Promise(r => rec.onstop = r); rec.start(250); await v.play(); note.textContent = 'Recording in real time. Keep this tab open and in front.';
+    const vw = v.videoWidth, vh = v.videoHeight, cropW = Math.min(vw, vh*9/16), cropH = cropW < vw ? vh : vw*16/9;
+    await new Promise(res => { const step = () => { if (CANCEL_EXPORT || v.currentTime*1000 >= c.e || v.ended){ res(); return; }
+      const t = v.currentTime*1000 - c.s; gn.gain.value = clamp(Math.min(t/60, (c.e - v.currentTime*1000)/180)); const cx = framingX(v.currentTime*1000)*vw; const sx = clamp(cx - cropW/2, 0, vw - cropW), sy = Math.max(0, (vh - cropH)/2);
+      g.fillStyle = '#000'; g.fillRect(0,0,W,H); const z = fxOn() ? zoomAt(t, c.e - c.s) : 1, cw2 = cropW/z, ch2 = Math.min(cropH, vh)/z; const sx2 = clamp(cx - cw2/2, 0, vw - cw2), sy2 = clamp((vh - ch2)/2, 0, vh - ch2);
+      g.drawImage(v, sx2, sy2, cw2, ch2, 0, 0, W, H); drawCaptionCanvas(g, pages.find(p => t >= p.s && t < p.e), t, W, H);
+      if (hookOn() && c.meta) drawHookCanvas(g, c.meta.title, t, W, H); if (fxOn()){ g.fillStyle = '#fff'; g.fillRect(0, H-5, W*Math.min(1, t/(c.e-c.s)), 5); }
+      pr.firstElementChild.style.width = Math.round(t/(c.e-c.s)*100) + '%'; requestAnimationFrame(step); }; step(); });
+    v.pause(); rec.stop(); await done; ac.close();
+    const blob = new Blob(parts, {type: mime.split(';')[0]}); const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm'; const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `cliptic-clip-${SEL+1}.${ext}`; document.body.appendChild(a); a.click(); a.remove();
+    note.innerHTML = `Saved <b>${esc(a.download)}</b> (${(blob.size/1048576).toFixed(1)} MB). If nothing downloaded, <a href="${url}" download="${esc(a.download)}" style="color:var(--accent)">tap here</a>.`;
+  }catch(e){ note.textContent = 'Export failed: ' + (e.message || e); }
+  finally{ EXPORTING = false; CANCEL_EXPORT = false; pr.hidden = true; }
+};
+let CANCEL_EXPORT = false;
+
+document.querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return; seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  if (b.dataset.p){ const [mn, tg, mx] = b.dataset.p.split(',').map(Number); $('min').value = mn; $('tgt').value = tg; $('max').value = mx; if (A && screen !== 'home') rank(); }
+  else { const sel = $(seg.id.replace('seg-', '')); sel.value = b.dataset.v; sel.dispatchEvent(new Event('change')); }
+}));
+/* ================= install as an app (PWA) ================= */
+let DEFERRED = null; const ib = $('install');
+const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+async function keepStorage(){ try{ if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); }catch{} }
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); DEFERRED = e; if (ib && !standalone()) ib.hidden = false; });
+window.addEventListener('appinstalled', () => { if (ib) ib.hidden = true; keepStorage(); });
+if (ib){
+  if (!standalone() && /iphone|ipad|ipod/i.test(navigator.userAgent)) ib.hidden = false;
+  ib.onclick = async () => { await keepStorage();
+    if (DEFERRED){ DEFERRED.prompt(); await DEFERRED.userChoice.catch(()=>{}); DEFERRED = null; ib.hidden = true; }
+    else alert(/iphone|ipad|ipod/i.test(navigator.userAgent) ? 'On iPhone/iPad: tap the Share button, then "Add to Home Screen".' : 'Open your browser menu and choose "Install app" or "Add to Home screen".'); };
+}
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+$('go').addEventListener('click', keepStorage);
+window.__cliptic = {get A(){return A}, get CLIPS(){return CLIPS}};  // for automated testing only
+</script>
+
+</html>
