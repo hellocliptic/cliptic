@@ -662,14 +662,17 @@ async function loadAsr(onProg){
   T.env.allowLocalModels = false; T.env.useBrowserCache = true;
   const files = {}; const cb = p => { if (p.status === 'progress' && p.total){ files[p.file] = [p.loaded, p.total]; let l = 0, t = 0; for (const k in files){ l += files[k][0]; t += files[k][1]; } onProg(t ? l/t : 0, `Downloading speech model ${(l/1048576).toFixed(0)} / ${(t/1048576).toFixed(0)} MB`); } };
   const mobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
-  const gpu = {device: 'webgpu', dtype: {encoder_model: 'fp16', decoder_model_merged: 'q4f16'}}, q8 = {device: 'wasm', dtype: 'q8'}, plain = {device: 'wasm'};
-  const errs = [];
-  for (let m = 0; m < LIST.length; m++){
-    const order = m === 0 ? (navigator.gpu && !mobile ? [gpu, q8, plain] : [q8, plain, ...(navigator.gpu ? [gpu] : [])]) : [q8, plain];
-    for (const opt of order){
-      try{ Object.keys(files).forEach(k => delete files[k]); ASRS[mode] = await T.pipeline('automatic-speech-recognition', LIST[m], {...opt, progress_callback: cb}); chip('chipModel', 'ok', 'Speech: ready'); return ASRS[mode]; }
-      catch(e){ let msg = String(e && e.message || e); if (/^\d+$/.test(msg.trim())) msg = 'internal error code ' + msg + ' (usually out of memory)'; errs.push(`${LIST[m].split('/')[1]} / ${opt.device}${opt.dtype && typeof opt.dtype === 'string' ? '/' + opt.dtype : ''}: ${msg.slice(0, 160)}`); drawStages(1, 0, 'Trying another way to load the speech model…'); }
-    }
+  // Some quantised models crash ONNX Runtime's graph optimiser ("Missing required scale"), so optimisation is switched off,
+  // and unquantised (fp32) tiny models are the last resort because they have no quantisation to trip over.
+  const so = {graphOptimizationLevel: 'disabled'};
+  const plan = [[LIST[0], {device: 'wasm', dtype: 'q8', session_options: so}], [LIST[1], {device: 'wasm', dtype: 'q8', session_options: so}], [MODELS.fast[0], {device: 'wasm', dtype: 'fp32', session_options: so}], [MODELS.fast[1], {device: 'wasm', dtype: 'fp32', session_options: so}]];
+  if (navigator.gpu && !mobile) plan.unshift([LIST[0], {device: 'webgpu', dtype: {encoder_model: 'fp16', decoder_model_merged: 'q4f16'}}]);
+  const seen = new Set(), errs = [];
+  for (const [model, opt] of plan){
+    const key = model + JSON.stringify(opt.dtype) + opt.device; if (seen.has(key)) continue; seen.add(key);
+    const tag = `${model.split('/')[1]} / ${opt.device}${typeof opt.dtype === 'string' ? '/' + opt.dtype : ''}`;
+    try{ Object.keys(files).forEach(k => delete files[k]); onProg(0, 'Loading ' + tag + '…'); ASRS[mode] = await T.pipeline('automatic-speech-recognition', model, {...opt, progress_callback: cb}); chip('chipModel', 'ok', 'Speech: ready'); return ASRS[mode]; }
+    catch(e){ let msg = String(e && e.message || e); if (/^\d+$/.test(msg.trim())) msg = 'internal error code ' + msg + ' (usually out of memory)'; errs.push(tag + ': ' + msg.slice(0, 200)); }
   }
   chip('chipModel', 'bad', 'Speech: failed'); throw new Error('Could not load the speech model.\n' + errs.join('\n'));
 }
