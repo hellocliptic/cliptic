@@ -556,7 +556,7 @@ function wave(c){
 }
 function renderClips(){
   $('clipsmeta').textContent = `${META.name} · ${fmt(META.dur)} · ${CAPWORDS.length>4 ? `${CAPWORDS.length} words transcribed · ranked from what is said, how it sounds and the visuals` : A.hasAudio ? 'transcription unavailable · ranked from audio energy, pauses and visuals' : 'no usable audio · ranked from visuals only'}${RELAXED ? ' · no stretch met the minimum length, so the limit was halved' : ''}`;
-  const warn = A.asrError ? `<div class="err"><b>Speech recognition did not run.</b> ${esc(A.asrError)}<br><span class="note">Clips below use audio and visuals only, so they may start or end less cleanly. Open this page in your phone's own browser (Chrome) with internet for the first run to enable transcription.</span></div>` : '';
+  const warn = A.asrError ? `<div class="err"><b>Speech recognition did not run.</b> <span style="white-space:pre-wrap;word-break:break-word;font:12px/1.4 var(--mono)">${esc(A.asrError)}</span><br><span class="note">Clips below use audio and visuals only, so they may start or end less cleanly. Open this page in your phone's own browser (Chrome) with internet for the first run to enable transcription.</span></div>` : '';
   $('sc-n').textContent = CLIPS.length; $('sc-top').textContent = CLIPS.length ? Math.round(CLIPS[0].score) : '—'; $('sc-words').textContent = CAPWORDS.length;
   if (!CLIPS.length){ $('clips').innerHTML = warn + '<div class="panel">No clip fits these limits. Lower the minimum length in Settings and press Re-rank.</div>'; return; }
   const endTag = c => c.endKind === 'sentence' ? '<span class="tag g">Ends on a full sentence</span>' : c.endKind === 'pause' ? '<span class="tag g">Ends on a natural pause</span>' : '<span class="tag">Ending not verified</span>';
@@ -639,23 +639,29 @@ $('srtbtn').onclick = () => { const T = ms => { const s = Math.floor(ms/1000); r
   $('srtout').textContent = PAGES.map((p,i) => `${i+1}\n${T(p.s)} --> ${T(p.e)}\n${p.words.map(cl).join(' ')}\n`).join('\n'); $('srtout').hidden = false; };
 
 /* ================= speech recognition: Whisper running locally via Transformers.js ================= */
-const MODELS = {fast: 'onnx-community/whisper-tiny_timestamped', balanced: 'onnx-community/whisper-base_timestamped'}, TJS = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0/+esm';
+const MODELS = {fast: ['onnx-community/whisper-tiny_timestamped', 'Xenova/whisper-tiny'], balanced: ['onnx-community/whisper-base_timestamped', 'Xenova/whisper-base']}, TJS = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0/+esm';
 const ASRS = {};
 function chip(id, state, text){ const c = $(id); c.className = 'chip ' + state; $(id + 'T').textContent = text; }
 chip('chipDev', '', navigator.gpu ? 'GPU' : 'CPU');
 async function loadAsr(onProg){
-  const mode = $('mode').value || 'balanced', MODEL = MODELS[mode];
+  const mode = $('mode').value || 'balanced', LIST = MODELS[mode];
   if (ASRS[mode]) return ASRS[mode];
   if (window.__asrStub) return (ASRS[mode] = window.__asrStub);
   chip('chipModel', '', 'Speech: loading');
-  const T = await import(TJS).catch(e => { throw new Error('Could not load the speech library (offline or blocked): ' + (e.message||e)); });
+  const T = await import(TJS).catch(e => { chip('chipModel', 'bad', 'Speech: failed'); throw new Error('Could not load the speech library (offline or blocked): ' + (e.message||e)); });
   T.env.allowLocalModels = false; T.env.useBrowserCache = true;
   const files = {}; const cb = p => { if (p.status === 'progress' && p.total){ files[p.file] = [p.loaded, p.total]; let l = 0, t = 0; for (const k in files){ l += files[k][0]; t += files[k][1]; } onProg(t ? l/t : 0, `Downloading speech model ${(l/1048576).toFixed(0)} / ${(t/1048576).toFixed(0)} MB`); } };
-  const attempts = []; if (navigator.gpu) attempts.push({device: 'webgpu', dtype: {encoder_model: 'fp16', decoder_model_merged: 'q4f16'}});
-  attempts.push({device: 'wasm', dtype: 'q8'}); attempts.push({device: 'wasm'});
-  let last;
-  for (const opt of attempts){ try{ ASRS[mode] = await T.pipeline('automatic-speech-recognition', MODEL, {...opt, progress_callback: cb}); chip('chipModel', 'ok', 'Speech: ready'); return ASRS[mode]; }catch(e){ last = e; } }
-  chip('chipModel', 'bad', 'Speech: failed'); throw new Error('Could not load the speech model: ' + (last?.message || last));
+  const mobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+  const gpu = {device: 'webgpu', dtype: {encoder_model: 'fp16', decoder_model_merged: 'q4f16'}}, q8 = {device: 'wasm', dtype: 'q8'}, plain = {device: 'wasm'};
+  const errs = [];
+  for (let m = 0; m < LIST.length; m++){
+    const order = m === 0 ? (navigator.gpu && !mobile ? [gpu, q8, plain] : [q8, plain, ...(navigator.gpu ? [gpu] : [])]) : [q8, plain];
+    for (const opt of order){
+      try{ Object.keys(files).forEach(k => delete files[k]); ASRS[mode] = await T.pipeline('automatic-speech-recognition', LIST[m], {...opt, progress_callback: cb}); chip('chipModel', 'ok', 'Speech: ready'); return ASRS[mode]; }
+      catch(e){ let msg = String(e && e.message || e); if (/^\d+$/.test(msg.trim())) msg = 'internal error code ' + msg + ' (usually out of memory)'; errs.push(`${LIST[m].split('/')[1]} / ${opt.device}${opt.dtype && typeof opt.dtype === 'string' ? '/' + opt.dtype : ''}: ${msg.slice(0, 160)}`); drawStages(1, 0, 'Trying another way to load the speech model…'); }
+    }
+  }
+  chip('chipModel', 'bad', 'Speech: failed'); throw new Error('Could not load the speech model.\n' + errs.join('\n'));
 }
 function toMono16k(audio){
   const oc = new OfflineAudioContext(1, Math.ceil(audio.duration*16000), 16000); const src = oc.createBufferSource(); src.buffer = audio; src.connect(oc.destination); src.start();
