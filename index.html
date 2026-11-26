@@ -154,7 +154,7 @@ footer{display:flex;gap:18px;color:var(--muted);font-size:12.5px;padding:6px 4px
   <main id="s-run" class="app" hidden>
     <h1>Analysing</h1><p class="lead" id="runfile"></p>
     <div class="panel" id="stages" style="padding:6px 14px"></div>
-    <button class="btn" id="cancel">Cancel</button>
+    <p class="note" id="liveerr" hidden style="white-space:pre-wrap;word-break:break-word;color:var(--bad)"></p><button class="btn" id="cancel">Cancel</button>
   </main>
 
   <!-- CLIPS -->
@@ -210,6 +210,12 @@ footer{display:flex;gap:18px;color:var(--muted);font-size:12.5px;padding:6px 4px
       <label class="f">Spoken language<select id="lang"><option value="">Auto-detect</option><option value="english">English</option><option value="hindi">Hindi</option><option value="spanish">Spanish</option><option value="french">French</option><option value="german">German</option><option value="portuguese">Portuguese</option><option value="arabic">Arabic</option><option value="indonesian">Indonesian</option></select></label>
       <button class="btn" id="rerank">Re-rank with these limits</button>
       <p class="note">Re-rank reuses the analysis already done, so it is instant.</p>
+    </section>
+    <section class="panel">
+      <div class="lbl"><span>Diagnostics</span></div>
+      <p class="note">If something fails, run this and send a screenshot of the result.</p>
+      <button class="btn" id="diagbtn">Run diagnostics</button>
+      <div class="out" id="diag" hidden></div>
     </section>
   </main>
   <footer><span>On-device</span><span>No account</span><span>No upload</span></footer>
@@ -318,21 +324,21 @@ $('go').onclick = async () => {
 };
 
 async function analyze(){
-  const R = {envDb: null, voiced: null, units: [], vis: null, hasAudio: false, dur: META.dur}; ST = {};
+  const R = {envDb: null, voiced: null, units: [], vis: null, hasAudio: false, dur: META.dur}; ST = {}; $('liveerr').hidden = true;
   // 1. decode audio (real PCM)
   drawStages(0, .1, 'Reading file…'); await tick();
   let audio = null;
   try{
-    const buf = await FILE.arrayBuffer(); chk();
+    let buf = await FILE.arrayBuffer(); chk();
     drawStages(0, .5, 'Decoding…'); await tick();
     const AC = window.AudioContext || window.webkitAudioContext; const ac = new AC();
-    audio = await ac.decodeAudioData(buf); ac.close();
+    audio = await ac.decodeAudioData(buf); buf = null; ac.close();
   }catch(e){ if (e instanceof Cancelled) throw e; audio = null; }
   chk();
   // 1b. automatic speech recognition (local Whisper) -> word timestamps
   drawStages(0, 1, ''); R.words = []; R.asrError = '';
   // speech recognition runs while loudness and frames are analysed (they do not depend on each other)
-  const asrP = audio ? transcribe(audio).then(w => ({w}), e => ({e})) : Promise.resolve({e: new Error('No audio track could be decoded from this video.')});
+  let asrP = null;
   chk();
   // 2. loudness envelope + speech activity
   if (audio){
@@ -371,6 +377,10 @@ async function analyze(){
     }
   }
   chk();
+  // Free the big decoded audio (can be hundreds of MB on a phone) before the speech model loads: keep only 16 kHz mono.
+  let pcm = null; if (audio){ try{ pcm = await toMono16k(audio); }catch{ pcm = null; } } audio = null;
+  asrP = pcm ? transcribe(pcm).then(w => ({w}), e => ({e})) : Promise.resolve({e: new Error('No audio track could be decoded from this video.')});
+  asrP.then(r => { if (r.e && !(r.e instanceof Cancelled)){ const el = $('liveerr'); el.textContent = 'Speech recognition failed: ' + (r.e.message || r.e); el.hidden = false; } });
   // 3. frames: histogram scene cuts, motion, motion centroid, faces if the browser has the Shape Detection API
   drawStages(2, 1, '');
   R.vis = await sampleFrames(drawStages);
@@ -678,10 +688,10 @@ function planChunks(pcm, sr = 16000, win = 30, search = 5){
   return out;
 }
 const HALLU = /(thanks for watching|thank you for watching|please subscribe|subtitles by|amara\.org)/i;
-async function transcribe(audio){
+async function transcribe(pcm){
   const lang = $('lang').value || null; drawStages(1, 0, 'Preparing…'); await tick();
   const asr = await loadAsr((p, d) => drawStages(1, p*.5, d)); chk();
-  const pcm = await toMono16k(audio); chk();
+  chk();
   const chunks = planChunks(pcm); const words = [];
   for (let ci = 0; ci < chunks.length; ci++){
     chk(); const [a, b] = chunks[ci]; const part = pcm.subarray(a, b);
@@ -767,6 +777,18 @@ if (ib){
 }
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
 $('go').addEventListener('click', keepStorage);
+$('diagbtn').onclick = async () => {
+  const o = $('diag'); o.hidden = false; const L = []; const P = s => { L.push(s); o.textContent = L.join('\n'); };
+  P('Page: ' + location.origin + ' | secure=' + isSecureContext + ' | isolated=' + crossOriginIsolated); P('Browser: ' + navigator.userAgent.slice(0, 140));
+  P('Memory (GB, approx): ' + (navigator.deviceMemory || '?') + ' | WebGPU: ' + !!navigator.gpu + ' | MediaRecorder: ' + (typeof MediaRecorder !== 'undefined'));
+  const link = document.querySelector('link[rel=manifest]'); P('Manifest link: ' + (link ? link.href : 'MISSING'));
+  for (const u of ['manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'sw.js']){ try{ const r = await fetch(u, {cache: 'no-store'}); P(u + ': ' + r.status + ' ' + (r.headers.get('content-type') || '')); }catch(e){ P(u + ': ' + e.message); } }
+  try{ const reg = await navigator.serviceWorker.getRegistration(); P('Service worker: ' + (reg ? (reg.active ? 'active' : 'registered, not active') : 'none')); }catch(e){ P('Service worker: ' + e.message); }
+  try{ await import(TJS); P('Speech library: loaded'); }catch(e){ P('Speech library: FAILED ' + (e.message || e)); return; }
+  for (const m of ['onnx-community/whisper-tiny_timestamped', 'Xenova/whisper-tiny']) for (const f of ['config.json', 'onnx/encoder_model_quantized.onnx']){ try{ const r = await fetch('https://huggingface.co/' + m + '/resolve/main/' + f, {method: 'HEAD'}); P(m + '/' + f + ': ' + r.status); }catch(e){ P(m + '/' + f + ': blocked (' + e.message + ')'); } }
+  P('Loading the speech model (' + ($('mode').value || 'balanced') + ')...');
+  try{ await loadAsr((p, d) => { o.textContent = L.join('\n') + '\n' + d; }); P('Speech model: loaded OK'); }catch(e){ P(e.message || e); }
+};
 window.__cliptic = {get A(){return A}, get CLIPS(){return CLIPS}};  // for automated testing only
 </script>
 
