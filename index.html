@@ -73,6 +73,7 @@ h2{font:700 17px var(--font);letter-spacing:-.01em;margin:0}
 .cta:active{transform:scale(.985)}
 .cta:disabled{background:var(--panel2);color:#62626b;cursor:not-allowed}
 .btns{display:flex;gap:8px}
+.wrap>.btn,.panel>.btn,.wrap>.cta{flex:none}
 .btn{flex:1;height:44px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);color:var(--fg);font:600 14px var(--font);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px}
 .btn.ghost{background:transparent}
 .btn.sm{height:34px;font-size:12.5px;border-radius:9px;flex:none;padding:0 10px}
@@ -167,7 +168,31 @@ footer{display:flex;gap:18px;color:var(--muted);font-size:12.5px;padding:8px 0}
 .isl-act button.p{background:#fff;color:#000}
 .isl[data-s=done] #isl-cancel{display:none}
 .isl:not([data-s=done]) #isl-open{display:none}
-@media (prefers-reduced-motion:reduce){.isl-pill,.isl-more,.isl-bar i{transition:none}.st.on .dot{animation:none}}
+.isl{transition:transform .45s cubic-bezier(.3,1.4,.4,1)}.isl.drag{transition:none}
+.isl{transform:translateX(-50%) translateY(var(--dy,0px))}
+.isl-bar i.cd{transition:width var(--cd,10s) linear;width:0!important}
+.isl-pill{touch-action:none}
+.isl-txt,.isl-ring,.isl-check{transition:opacity .3s}
+.enter{animation:enter .34s cubic-bezier(.2,.8,.2,1) both}
+@keyframes enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+.clip{animation:rise .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*55ms)}
+.seg button{transition:background .2s,color .2s}
+.btn,.cta,.tab{transition:transform .14s,background .2s,border-color .2s,color .2s}
+.btn:active{transform:scale(.97)}
+.prog i,#runbar{transition:width .45s cubic-bezier(.3,.7,.2,1)}
+.tab.busy::before{content:"";position:absolute;top:15px;right:1px;width:7px;height:7px;border-radius:50%;background:var(--good);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35;transform:scale(.7)}}
+.act{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel2);animation:rise .4s cubic-bezier(.2,.8,.2,1) both}
+.act .hd{display:flex;gap:12px;align-items:center}
+.act .ic{width:22px;height:22px;border-radius:50%;border:2px solid var(--fg);border-top-color:transparent;animation:spin .8s linear infinite;flex:none;display:grid;place-items:center;font-size:12px;font-style:normal;font-weight:800;color:#000}
+.act.done .ic{animation:none;background:var(--good);border-color:var(--good)}
+.act.error .ic{animation:none;background:var(--bad);border-color:var(--bad)}
+.act.cancelled .ic{animation:none;background:#55555d;border-color:#55555d}
+.act .tx{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}.act .tx b{font-weight:650;font-size:14.5px}.act .tx span{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.act em{font-style:normal;font:600 13px var(--mono);color:var(--soft)}
+.act .btns:empty{display:none}
+@media (prefers-reduced-motion:reduce){.enter,.clip,.act{animation:none}.isl-pill,.isl-more,.isl-bar i{transition:none}.st.on .dot{animation:none}}
 </style>
 
 <div class="isl" id="isl" data-s="hidden" role="status" aria-live="polite">
@@ -219,9 +244,10 @@ footer{display:flex;gap:18px;color:var(--muted);font-size:12.5px;padding:8px 0}
     <div class="lbl"><span>Speech model</span><span style="font-weight:500;color:var(--muted)">Fast is quicker on phones</span></div>
     <div class="seg" id="seg-mode"><button data-v="fast">Fast</button><button data-v="balanced" aria-pressed="true">Balanced</button></div>
     <select id="mode" class="hid"><option value="fast">fast</option><option value="balanced" selected>balanced</option></select>
+    <label class="f">Spoken language<select id="lang"><option value="">Auto-detect</option><option value="english">English</option><option value="hindi">Hindi</option><option value="spanish">Spanish</option><option value="french">French</option><option value="german">German</option><option value="portuguese">Portuguese</option><option value="arabic">Arabic</option><option value="indonesian">Indonesian</option></select></label>
     <button class="cta" id="go" disabled>Find best clips</button>
     <div id="homeerr" class="err" hidden></div>
-    <p class="note" id="asrnote">First run downloads the speech model once (Fast about 40 MB, Balanced about 80 MB). Everything runs on your device.</p>
+    <p class="note" id="asrnote">First run downloads the speech model once (Fast about 40 MB, Balanced about 80 MB). Picking your language is faster and more accurate than auto-detect. Everything runs on your device.</p>
     <button class="cta" id="install" hidden style="background:var(--panel2);color:var(--fg);border:1px solid var(--line2)">Install Cliptic as an app</button>
   </section>
   <div class="steps">
@@ -244,10 +270,14 @@ footer{display:flex;gap:18px;color:var(--muted);font-size:12.5px;padding:8px 0}
 <!-- CLIPS -->
 <main id="s-clips" class="wrap" hidden style="padding-top:8px">
   <div><p class="eyebrow">Results</p><h1>Best clips</h1></div>
-  <div class="strip"><div><small>Clips</small><b id="sc-n">0</b></div><div><small>Top score</small><b id="sc-top">—</b></div><div><small>Words heard</small><b id="sc-words">0</b></div></div>
-  <p class="note" id="clipsmeta"></p>
-  <div id="clips" class="wrap" style="gap:12px;padding:0"></div>
-  <p class="note">Scores estimate content quality from the signals shown. They do not predict views.</p>
+  <section class="panel" id="activity" hidden><div class="lbl"><span>Activity</span><button class="btn ghost sm" id="actclear">Clear finished</button></div><div id="actlist" class="wrap" style="padding:0;gap:10px"></div></section>
+  <div id="clipsempty" class="panel"><b>No clips yet</b><span class="note">Import a video in Studio and tap Find best clips. Running jobs appear here.</span><button class="btn" id="goStudio">Go to Studio</button></div>
+  <div id="clipsbody" class="wrap" style="padding:0" hidden>
+    <div class="strip"><div><small>Clips</small><b id="sc-n">0</b></div><div><small>Top score</small><b id="sc-top">—</b></div><div><small>Words heard</small><b id="sc-words">0</b></div></div>
+    <p class="note" id="clipsmeta"></p>
+    <div id="clips" class="wrap" style="gap:12px;padding:0"></div>
+    <p class="note">Scores estimate content quality from the signals shown. They do not predict views.</p>
+  </div>
 </main>
 
 <!-- EDITOR -->
@@ -317,11 +347,18 @@ footer{display:flex;gap:18px;color:var(--muted);font-size:12.5px;padding:8px 0}
       <label class="f">Max clip (s)<input id="max" type="number" value="60" min="8" max="180"></label>
       <label class="f">Number of clips<input id="n" type="number" value="6" min="1" max="12"></label>
     </div>
-    <label class="f">Spoken language<select id="lang"><option value="">Auto-detect</option><option value="english">English</option><option value="hindi">Hindi</option><option value="spanish">Spanish</option><option value="french">French</option><option value="german">German</option><option value="portuguese">Portuguese</option><option value="arabic">Arabic</option><option value="indonesian">Indonesian</option></select></label>
     <button class="btn" id="rerank">Re-rank with these limits</button>
     <p class="note">Re-rank reuses the analysis already done, so it is instant.</p>
   </section>
   <section class="panel">
+    <div class="lbl"><span>Caption timing</span></div>
+    <div class="seg" id="seg-timing"><button data-v="fast" aria-pressed="true">Fast</button><button data-v="precise">Precise</button></div>
+    <select id="timing" class="hid"><option value="fast">f</option><option value="precise">p</option></select>
+    <p class="note">Fast times each spoken phrase and spreads its words evenly, which transcribes noticeably quicker. Precise times every word: slower, better lip-sync.</p>
+    <div class="lbl"><span>Multi-threading</span></div>
+    <div class="seg" id="seg-threads"><button data-v="auto" aria-pressed="true">Auto</button><button data-v="off">Off</button></div>
+    <select id="threads" class="hid"><option value="auto">a</option><option value="off">o</option></select>
+    <p class="note">Uses several CPU cores for speech when the browser allows it. Turn off if transcription ever freezes, then reload the page.</p>
     <div class="lbl"><span>Speed: use the GPU for speech</span></div>
     <div class="seg" id="seg-gpu"><button data-v="auto" aria-pressed="true">Auto</button><button data-v="on">Try GPU</button><button data-v="off">CPU only</button></div>
     <select id="gpu" class="hid"><option value="auto">a</option><option value="on">o</option><option value="off">f</option></select>
@@ -360,9 +397,11 @@ function show(name){
   const tab = name === 'prev' ? 'clips' : name === 'run' ? 'home' : name;
   document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-current', String(b.dataset.t === tab)));
   if (name !== 'prev') stopPlay();
+  const sc = $('s-'+name); sc.classList.remove('enter'); void sc.offsetWidth; sc.classList.add('enter');
+  if (name === 'clips'){ $('clipsbody').hidden = !hasResult; $('clipsempty').hidden = hasResult; }
   window.scrollTo(0,0);
 }
-document.querySelectorAll('.tab').forEach(b => b.onclick = () => { if (b.dataset.t === 'clips' && !hasResult) return show('home'); show(b.dataset.t); });
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => { if (b.dataset.t === 'home' && BUSY) return show('run'); show(b.dataset.t); });
 
 /* ================= state ================= */
 let RELAXED = false, FILE = null, META = null, A = null /* analysis */, CLIPS = [], SEL = -1, CANCEL = false, CAPWORDS = [];
@@ -378,20 +417,50 @@ async function notify(title, body, tag, silent){
     const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration(); if (reg) reg.showNotification(title, opt); else new Notification(title, opt); }catch{}
 }
 const ISL = (() => {
-  const el = $('isl'), pill = $('islpill'); let hideT = null, expT = null, cancelFn = null, openFn = null, lastN = 0; const C = 2*Math.PI*15;
+  const el = $('isl'), pill = $('islpill'); let hideT = null, expT = null, cancelFn = null, openFn = null, lastN = 0, dismissed = false, g = null; const C = 2*Math.PI*15, bar = $('isl-bar');
   const logo = document.querySelector('.logo img'); if (logo) $('isl-logo').src = logo.src;
-  const st = s => { el.dataset.s = s; };
-  const paint = (t, s, p) => { $('isl-t').textContent = t; $('isl-s').textContent = s || ''; if (p != null){ $('isl-ring').style.strokeDashoffset = String(C*(1 - clamp(p))); $('isl-bar').style.width = (clamp(p)*100).toFixed(0) + '%'; } };
-  pill.onclick = e => { if (e.target.closest('button')) return; const s = el.dataset.s; if (s === 'compact') st('expanded'); else if (s === 'expanded') st('compact'); else if (s === 'done'){ openFn && openFn(); st('hidden'); } };
+  const st = s => { el.dataset.s = s; if (s !== 'done') bar.classList.remove('cd'); };
+  const buzz = () => { try{ navigator.vibrate && navigator.vibrate(8); }catch{} };
+  const paint = (t, s, p) => { $('isl-t').textContent = t; $('isl-s').textContent = s || ''; if (p != null && el.dataset.s !== 'done'){ $('isl-ring').style.strokeDashoffset = String(C*(1 - clamp(p))); bar.style.width = (clamp(p)*100).toFixed(0) + '%'; } };
+  const countdown = ms => { clearTimeout(hideT); bar.classList.remove('cd'); bar.style.setProperty('--cd', '0ms'); bar.style.width = '100%'; void bar.offsetWidth; bar.style.setProperty('--cd', ms + 'ms'); bar.classList.add('cd'); hideT = setTimeout(() => { if (el.dataset.s === 'done') st('hidden'); }, ms); };
+  pill.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; g = {y: e.clientY, moved: false}; clearTimeout(hideT); if (el.dataset.s === 'done'){ bar.classList.remove('cd'); bar.style.setProperty('--cd', '0ms'); bar.style.width = '100%'; } el.classList.add('drag'); try{ pill.setPointerCapture(e.pointerId); }catch{} });
+  pill.addEventListener('pointermove', e => { if (!g) return; const dy = e.clientY - g.y; if (Math.abs(dy) > 8) g.moved = true; if (g.moved) el.style.setProperty('--dy', (dy < 0 ? dy*.7 : Math.min(dy*.25, 18)) + 'px'); });
+  const end = e => { if (!g) return; const dy = e.clientY - g.y, moved = g.moved; g = null; el.classList.remove('drag'); el.style.removeProperty('--dy'); const s = el.dataset.s;
+    if (moved){ if (dy < -22){ dismissed = true; st('hidden'); buzz(); return; } if (dy > 22 && s === 'compact'){ st('expanded'); buzz(); } if (el.dataset.s === 'done') countdown(4000); return; }
+    buzz(); if (s === 'compact') st('expanded'); else if (s === 'expanded') st('compact'); else if (s === 'done'){ openFn && openFn(); st('hidden'); } };
+  pill.addEventListener('pointerup', end); pill.addEventListener('pointercancel', end);
+  pill.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); const s = el.dataset.s; if (s === 'compact') st('expanded'); else if (s === 'expanded') st('compact'); else if (s === 'done'){ openFn && openFn(); st('hidden'); } } });
   $('isl-cancel').onclick = () => { cancelFn && cancelFn(); };
   $('isl-open').onclick = () => { openFn && openFn(); if (el.dataset.s === 'done') st('hidden'); else st('compact'); };
   return {
-    start(t, s, onCancel, onOpen){ clearTimeout(hideT); clearTimeout(expT); cancelFn = onCancel; openFn = onOpen; paint(t, s, 0); st('expanded'); expT = setTimeout(() => { if (el.dataset.s === 'expanded') st('compact'); }, 2600); },
-    update(t, s, p){ if (el.dataset.s === 'hidden') st('compact'); paint(t, s, p); const now = Date.now(); if (document.hidden && now - lastN > 4000){ lastN = now; notify(t, s, 'cliptic-progress', true); } },
-    done(t, s, onOpen){ clearTimeout(hideT); clearTimeout(expT); openFn = onOpen; paint(t, s, 1); st('done'); try{ navigator.vibrate && navigator.vibrate([25, 40, 25]); }catch{} hideT = setTimeout(() => st('hidden'), 6500); },
+    start(t, s, onCancel, onOpen){ clearTimeout(hideT); clearTimeout(expT); dismissed = false; cancelFn = onCancel; openFn = onOpen; $('isl-open').textContent = 'View'; paint(t, s, 0); st('expanded'); expT = setTimeout(() => { if (el.dataset.s === 'expanded') st('compact'); }, 2600); },
+    update(t, s, p){ paint(t, s, p); if (dismissed) return; if (el.dataset.s === 'hidden') st('compact'); const now = Date.now(); if (document.hidden && now - lastN > 4000){ lastN = now; notify(t, s, 'cliptic-progress', true); } },
+    done(t, s, onOpen, label){ clearTimeout(expT); dismissed = false; openFn = onOpen; $('isl-open').textContent = label || 'Open'; $('isl-t').textContent = t; $('isl-s').textContent = s || ''; st('done'); buzz(); countdown(10000); },
     hide(){ clearTimeout(hideT); clearTimeout(expT); st('hidden'); },
   };
 })();
+
+/* ---- activity: running and recent jobs, shown in the Clips tab and mirrored in the island ---- */
+const ACTV = []; let JID = 0, CUR_JOB = null;
+const elapsed = ms => { const s = Math.round(ms/1000); return s < 60 ? s + 's' : Math.floor(s/60) + 'm ' + String(s%60).padStart(2,'0') + 's'; };
+function paintAct(j){
+  const el = document.querySelector(`.act[data-j="${j.id}"]`); if (!el) return; el.querySelector('.a-t').textContent = j.title; el.querySelector('.a-s').textContent = j.sub || '';
+  const pc = Math.round(clamp(j.pct)*100); el.querySelector('.a-p').textContent = j.state === 'running' ? pc + '%' : ''; el.querySelector('.a-b').style.width = (j.state === 'done' ? 100 : pc) + '%';
+}
+function renderAct(){
+  $('activity').hidden = !ACTV.length;
+  $('actlist').innerHTML = ACTV.map(j => `<div class="act ${j.state}" data-j="${j.id}"><div class="hd"><span class="ic">${j.state === 'done' ? '✓' : j.state === 'error' ? '!' : j.state === 'cancelled' ? '–' : ''}</span><div class="tx"><b class="a-t"></b><span class="a-s"></span></div><em class="a-p"></em></div>${j.state === 'running' ? '<div class="prog"><i class="a-b"></i></div>' : '<i class="a-b" hidden></i>'}<div class="btns">${j.state === 'running' && j.onCancel ? '<button class="btn sm" data-a="cancel">Cancel</button>' : ''}${j.state !== 'running' && j.onOpen && j.state === 'done' ? `<button class="btn sm" data-a="open">${esc(j.open)}</button>` : ''}</div></div>`).join('');
+  ACTV.forEach(paintAct); document.querySelector('.tab[data-t=clips]').classList.toggle('busy', ACTV.some(j => j.state === 'running'));
+}
+$('actlist').addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (!b) return; const j = ACTV.find(x => x.id === +b.closest('.act').dataset.j); if (!j) return; if (b.dataset.a === 'cancel') j.onCancel && j.onCancel(); else j.onOpen && j.onOpen(); });
+$('actclear').onclick = () => { for (let i = ACTV.length - 1; i >= 0; i--) if (ACTV[i].state !== 'running') ACTV.splice(i, 1); renderAct(); };
+$('goStudio').onclick = () => show(BUSY ? 'run' : 'home');
+const jobs = {
+  start(o){ const j = {id: ++JID, state: 'running', pct: 0, t0: Date.now(), title: o.title, sub: o.sub || '', onCancel: o.onCancel, onOpen: o.onOpen, open: o.openLabel || 'Open'}; ACTV.unshift(j); if (ACTV.length > 6) ACTV.pop(); ISL.start(j.title + ' 0%', j.sub, j.onCancel, j.onOpen); renderAct(); return j; },
+  update(j, p){ if (!j) return; Object.assign(j, p); const pc = Math.round(clamp(j.pct)*100); paintAct(j); ISL.update(j.title + ' ' + pc + '%', j.sub, j.pct); },
+  done(j, o){ if (!j) return; Object.assign(j, {state: 'done', pct: 1, title: o.title, sub: (o.sub ? o.sub + ' · ' : '') + elapsed(Date.now() - j.t0), onOpen: o.onOpen, open: o.label || 'Open'}); renderAct(); ISL.done(o.title, j.sub, o.onOpen, o.label); },
+  end(j, state, title, sub){ if (!j) return; Object.assign(j, {state, title, sub: sub || '', onOpen: null}); renderAct(); ISL.hide(); },
+};
 $('notif').onclick = async () => {
   if (!('Notification' in window)){ $('notifnote').textContent = 'This browser does not support notifications. On iPhone they work only after Add to Home Screen.'; return; }
   const r = await Notification.requestPermission();
@@ -454,6 +523,8 @@ function sentencesOf(words){
 
 /* ================= analysis pipeline (real audio + real frames) ================= */
 const STAGES = ['Decoding audio','Transcribing speech','Measuring loudness and speech','Sampling video frames','Finding complete moments'];
+let PSHOW = 0, PTGT = 0, PRAF = 0;
+function pctTo(t){ PTGT = t; if (PRAF) return; const f = () => { PSHOW += (PTGT - PSHOW)*.2; if (Math.abs(PTGT - PSHOW) < .35) PSHOW = PTGT; $('runpct').textContent = Math.round(PSHOW) + '%'; PRAF = PSHOW === PTGT ? 0 : requestAnimationFrame(f); }; PRAF = requestAnimationFrame(f); }
 let ST = {};
 const WGT = [.06, .5, .06, .28, .10], SHORT = ['Decoding audio', 'Transcribing', 'Analysing audio', 'Scanning video', 'Ranking'];
 const overall = () => { let s = 0; for (let k = 0; k < 5; k++){ const x = ST[k]; s += WGT[k]*(x ? (x.done ? 1 : clamp(x.ov, 0, .999)) : 0); } return s; };
@@ -461,9 +532,9 @@ function drawStages(i, pct, detail, ov){
   ST[i] = {pct, ov: ov ?? pct, detail, done: pct >= 1 && detail === ''};
   $('stages').innerHTML = STAGES.map((n,k) => { const s = ST[k]; const done = s && s.done, on = s && !done; const p = on ? Math.round(clamp(s.pct)*100) : 0;
     return `<div class="st ${done?'done':on?'on':''}"><span class="dot">${done?'✓':''}</span><div style="flex:1;min-width:0"><div class="nm"><span>${n}</span>${on?`<em>${p}%</em>`:''}</div>${on?`<div class="prog"><i style="width:${p}%"></i></div><div class="note" style="margin-top:6px">${esc(s.detail||'')}</div>`:''}</div></div>`; }).join('');
-  const o = overall(), pc = Math.round(o*100); $('runpct').textContent = pc + '%'; $('runbar').style.width = pc + '%';
+  const o = overall(), pc = Math.round(o*100); pctTo(pc); $('runbar').style.width = pc + '%';
   let act = -1; for (let k = 0; k < 5; k++) if (ST[k] && !ST[k].done) act = k;
-  ISL.update((act >= 0 ? SHORT[act] : 'Analysing') + ' ' + pc + '%', act >= 0 ? (ST[act].detail || '') : '', o);
+  jobs.update(CUR_JOB, {title: act >= 0 ? SHORT[act] : 'Analysing', sub: act >= 0 ? (ST[act].detail || '') : '', pct: o});
 }
 const tick = () => new Promise(r => setTimeout(r, 0));
 class Cancelled extends Error {}
@@ -472,16 +543,19 @@ const chk = () => { if (CANCEL) throw new Cancelled(); };
 $('cancel').onclick = () => { CANCEL = true; };
 $('go').onclick = async () => {
   if (!FILE || !META) return;
-  CANCEL = false; homeError(''); show('run'); $('runfile').textContent = META.name; BUSY = true; keepAwake(true);
-  ISL.start('Analysing 0%', META.name, () => { CANCEL = true; }, () => show('run'));
+  CANCEL = false; homeError(''); PSHOW = PTGT = 0; show('run'); $('runfile').textContent = META.name; BUSY = true; keepAwake(true);
+  const J = CUR_JOB = jobs.start({title: 'Analysing', sub: META.name, onCancel: () => { CANCEL = true; }, onOpen: () => show('run'), openLabel: 'View'});
   try{
     A = await analyze(); hasResult = true; rank();
-    show('clips'); ISL.done(`${CLIPS.length} clip${CLIPS.length === 1 ? '' : 's'} ready`, 'Tap to view', () => show('clips')); notify('Cliptic: clips ready', `${CLIPS.length} clips found in ${META.name}`, 'cliptic-progress');
+    const n = CLIPS.length; jobs.done(J, {title: `${n} clip${n === 1 ? '' : 's'} ready`, sub: META.name, onOpen: () => show('clips'), label: 'View clips'});
+    if (screen === 'run' || screen === 'home') show('clips'); else if (screen === 'clips'){ renderClips(); show('clips'); }
+    notify('Cliptic: clips ready', `${n} clips found in ${META.name}`, 'cliptic-progress');
   }catch(e){
-    show('home'); ISL.hide(); if (!(e instanceof Cancelled)) homeError(e.message || String(e));
-  }finally{ BUSY = false; keepAwake(false); }
+    if (e instanceof Cancelled) jobs.end(J, 'cancelled', 'Analysis cancelled', META.name); else jobs.end(J, 'error', 'Analysis failed', (e.message || String(e)).split('\n')[0]);
+    if (screen === 'run') show('home'); if (!(e instanceof Cancelled)) homeError(e.message || String(e));
+  }finally{ BUSY = false; CUR_JOB = null; keepAwake(false); }
 };
-$('cancel').addEventListener('click', () => ISL.hide());
+
 
 async function analyze(){
   const R = {envDb: null, voiced: null, units: [], vis: null, hasAudio: false, dur: META.dur}; ST = {}; $('liveerr').hidden = true;
@@ -497,6 +571,7 @@ async function analyze(){
   chk();
   // 1b. automatic speech recognition (local Whisper) -> word timestamps
   drawStages(0, 1, ''); R.words = []; R.asrError = '';
+  if (audio) loadAsr((p, d) => drawStages(1, p, d, p*.12)).catch(() => {});   // start the model download/load now, while loudness is measured
   // speech recognition runs while loudness and frames are analysed (they do not depend on each other)
   let asrP = null;
   chk();
@@ -539,7 +614,7 @@ async function analyze(){
   chk();
   // Free the big decoded audio (can be hundreds of MB on a phone) before the speech model loads: keep only 16 kHz mono.
   let pcm = null; if (audio){ try{ pcm = await toMono16k(audio); }catch{ pcm = null; } } audio = null;
-  asrP = pcm ? transcribe(pcm).then(w => ({w}), e => ({e})) : Promise.resolve({e: new Error('No audio track could be decoded from this video.')});
+  asrP = pcm ? transcribe(pcm, R.voiced).then(w => ({w}), e => ({e})) : Promise.resolve({e: new Error('No audio track could be decoded from this video.')});
   asrP.then(r => { if (r.e && !(r.e instanceof Cancelled)){ const el = $('liveerr'); el.textContent = 'Speech recognition failed: ' + (r.e.message || r.e); el.hidden = false; } });
   // 3. frames: histogram scene cuts, motion, motion centroid, faces if the browser has the Shape Detection API
   drawStages(2, 1, '');
@@ -730,7 +805,7 @@ function renderClips(){
   $('sc-n').textContent = CLIPS.length; $('sc-top').textContent = CLIPS.length ? Math.round(CLIPS[0].score) : '—'; $('sc-words').textContent = CAPWORDS.length;
   if (!CLIPS.length){ $('clips').innerHTML = warn + '<div class="panel">No clip fits these limits. Lower the minimum length in Settings and press Re-rank.</div>'; return; }
   const endTag = c => c.endKind === 'sentence' ? '<span class="tag g">Ends on a full sentence</span>' : c.endKind === 'pause' ? '<span class="tag g">Ends on a natural pause</span>' : '<span class="tag">Ending not verified</span>';
-  $('clips').innerHTML = warn + CLIPS.map((c,i) => `<button class="clip" data-i="${i}"><div class="rk"><b>${Math.round(c.score)}</b><small>#${i+1}</small></div><div style="min-width:0">
+  $('clips').innerHTML = warn + CLIPS.map((c,i) => `<button class="clip" data-i="${i}" style="--i:${i}"><div class="rk"><b>${Math.round(c.score)}</b><small>#${i+1}</small></div><div style="min-width:0">
     <div class="tc">${fmt(c.s)}–${fmt(c.e)} · ${Math.round((c.e-c.s)/1000)}s</div>${wave(c)}
     <p class="ttl">${esc(clipMeta(c,i).title)}</p>
     ${c.hasText ? `<p class="txt">${esc(c.span.map(s=>s.text).join(' ').slice(0,150))}${c.span.map(s=>s.text).join(' ').length > 150 ? '…' : ''}</p>` : ''}
@@ -926,10 +1001,16 @@ const MODELS = {fast: ['onnx-community/whisper-tiny_timestamped', 'Xenova/whispe
 const ASRS = {};
 function chip(id, state, text){ const c = $(id); c.className = 'chip ' + state; $(id + 'T').textContent = text; }
 chip('chipDev', '', navigator.gpu ? 'GPU' : 'CPU');
-async function loadAsr(onProg){
-  const mode = $('mode').value || 'balanced', LIST = MODELS[mode];
-  if (ASRS[mode]) return ASRS[mode];
-  if (window.__asrStub) return (ASRS[mode] = window.__asrStub);
+const ASRL = {}; let ASR_PROG = () => {};
+function loadAsr(onProg){
+  if (onProg) ASR_PROG = onProg; const mode = $('mode').value || 'balanced';
+  if (ASRS[mode]) return Promise.resolve(ASRS[mode]);
+  if (window.__asrStub) return Promise.resolve(ASRS[mode] = window.__asrStub);
+  if (!ASRL[mode]) ASRL[mode] = loadAsrInner(mode).catch(e => { delete ASRL[mode]; throw e; });
+  return ASRL[mode];
+}
+async function loadAsrInner(mode){
+  const LIST = MODELS[mode], onProg = (p, d) => ASR_PROG(p, d);
   chip('chipModel', '', 'Speech: loading');
   const T = await import(TJS).catch(e => { chip('chipModel', 'bad', 'Speech: failed'); throw new Error('Could not load the speech library (offline or blocked): ' + (e.message||e)); });
   T.env.allowLocalModels = false; T.env.useBrowserCache = true;
@@ -942,12 +1023,18 @@ async function loadAsr(onProg){
   if (navigator.gpu && (gm === 'on' || (gm === 'auto' && !mobile))) plan.unshift([LIST[0], {device: 'webgpu', dtype: {encoder_model: 'fp16', decoder_model_merged: 'q4f16'}}]);
   const keyOf = (m, o) => m + '|' + o.device + '|' + JSON.stringify(o.dtype);
   try{ const pk = localStorage.getItem('cliptic.asr.' + mode); const i = plan.findIndex(p => keyOf(...p) === pk); if (i > 0 && (gm !== 'on' || pk.includes('|webgpu|'))) plan.unshift(plan.splice(i, 1)[0]); }catch{}
+  const cores = Math.min(4, navigator.hardwareConcurrency || 2); let threads = 1;
+  try{ if (crossOriginIsolated && $('threads').value !== 'off' && localStorage.getItem('cliptic.threads') !== 'off' && cores > 1) threads = cores; }catch{}
+  const setThreads = n => { threads = n; try{ T.env.backends.onnx.wasm.numThreads = n; }catch{} }; setThreads(threads);
   const seen = new Set(), errs = [];
   for (const [model, opt] of plan){
     const key = keyOf(model, opt); if (seen.has(key)) continue; seen.add(key);
     const tag = `${model.split('/')[1]} / ${opt.device}${typeof opt.dtype === 'string' ? '/' + opt.dtype : ''}`;
-    try{ Object.keys(files).forEach(k => delete files[k]); onProg(0, 'Loading ' + tag + '…'); ASRS[mode] = await T.pipeline('automatic-speech-recognition', model, {...opt, progress_callback: cb}); chip('chipModel', 'ok', 'Speech: ready'); chip('chipDev', '', opt.device === 'webgpu' ? 'GPU' : 'CPU'); try{ localStorage.setItem('cliptic.asr.' + mode, key); }catch{} return ASRS[mode]; }
-    catch(e){ let msg = String(e && e.message || e); if (/^\d+$/.test(msg.trim())) msg = 'internal error code ' + msg + ' (usually out of memory)'; errs.push(tag + ': ' + msg.slice(0, 200)); }
+    for (let attempt = 0; attempt < 2; attempt++){
+      try{ Object.keys(files).forEach(k => delete files[k]); onProg(0, 'Loading ' + tag + (threads > 1 ? ' (' + threads + ' threads)' : '') + '…'); ASRS[mode] = await T.pipeline('automatic-speech-recognition', model, {...opt, progress_callback: cb}); chip('chipModel', 'ok', 'Speech: ready'); chip('chipDev', '', opt.device === 'webgpu' ? 'GPU' : threads > 1 ? 'CPU ×' + threads : 'CPU'); try{ localStorage.setItem('cliptic.asr.' + mode, key); }catch{} return ASRS[mode]; }
+      catch(e){ let msg = String(e && e.message || e); if (/^\d+$/.test(msg.trim())) msg = 'internal error code ' + msg + ' (usually out of memory)'; errs.push(tag + (threads > 1 ? ' [' + threads + ' threads]' : '') + ': ' + msg.slice(0, 200));
+        if (attempt === 0 && threads > 1 && opt.device === 'wasm'){ setThreads(1); try{ localStorage.setItem('cliptic.threads', 'off'); }catch{} continue; } break; }
+    }
   }
   chip('chipModel', 'bad', 'Speech: failed'); throw new Error('Could not load the speech model.\n' + errs.join('\n'));
 }
@@ -966,20 +1053,24 @@ function planChunks(pcm, sr = 16000, win = 30, search = 5){
   return out;
 }
 const HALLU = /(thanks for watching|thank you for watching|please subscribe|subtitles by|amara\.org)/i;
-async function transcribe(pcm){
-  const lang = $('lang').value || null; drawStages(1, 0, 'Preparing…', 0); await tick();
+async function transcribe(pcm, voiced){
+  const lang = $('lang').value || null, precise = $('timing').value === 'precise'; drawStages(1, 0, 'Preparing…', 0); await tick();
   const asr = await loadAsr((p, d) => drawStages(1, p, d, p*.12)); chk();
-  chk();
   const chunks = planChunks(pcm); const words = [];
   for (let ci = 0; ci < chunks.length; ci++){
     chk(); const [a, b] = chunks[ci]; const part = pcm.subarray(a, b);
-    let sq = 0; for (let k = 0; k < part.length; k += 8) sq += part[k]*part[k]; if (Math.sqrt(sq/(part.length/8)) < .002) continue;  // silence: skip, avoids invented text
     drawStages(1, ci/chunks.length, `Listening… ${fmt(a/16)} of ${fmt(pcm.length/16)}`, .12 + .88*ci/chunks.length); await tick();
+    if (voiced){ const f0 = Math.floor(a/1600), f1 = Math.min(voiced.length, Math.ceil(b/1600)); let n = 0; for (let k = f0; k < f1; k++) if (voiced[k]) n++; if (f1 > f0 && n/(f1 - f0) < .06) continue; }  // music or silence: nothing to transcribe
+    let sq = 0; for (let k = 0; k < part.length; k += 8) sq += part[k]*part[k]; if (Math.sqrt(sq/(part.length/8)) < .002) continue;  // silence: skip, avoids invented text
     window.__asrOffsetMs = a/16;
-    const out = await asr(part, {return_timestamps: 'word', language: lang, task: 'transcribe'});
+    const out = await asr(part, {return_timestamps: precise ? 'word' : true, language: lang, task: 'transcribe'});
     if (HALLU.test(out.text || '') && (out.text||'').split(/\s+/).length < 10) continue;
     for (const c of (out.chunks || [])){ const t = (c.text || '').trim(); if (!t || /^[\[(*♪]/.test(t)) continue;
-      const s = a/16 + (c.timestamp[0] ?? 0)*1000; let e = a/16 + (c.timestamp[1] ?? (c.timestamp[0]+.3))*1000; if (!(e > s)) e = s + 250; words.push({t, s: Math.round(s), e: Math.round(e)}); }
+      if (precise){ const s = a/16 + (c.timestamp[0] ?? 0)*1000; let e = a/16 + (c.timestamp[1] ?? (c.timestamp[0]+.3))*1000; if (!(e > s)) e = s + 250; words.push({t, s: Math.round(s), e: Math.round(e)}); }
+      else { // phrase timestamps: spread the words across the phrase by length
+        const toks = t.split(/\s+/).filter(Boolean), s0 = c.timestamp[0] ?? 0, e0 = c.timestamp[1] ?? Math.min((b - a)/16000, s0 + toks.length*.4), wt = toks.map(x => x.replace(/[^\p{L}\p{N}]/gu, '').length + 2), sum = wt.reduce((x, y) => x + y, 0); let acc = 0;
+        toks.forEach((x, i) => { const ws = s0 + (e0 - s0)*acc/sum; acc += wt[i]; const we = s0 + (e0 - s0)*acc/sum; words.push({t: x, s: Math.round(a/16 + ws*1000), e: Math.round(a/16 + we*1000)}); }); }
+    }
   }
   // clean: monotone times, drop 3+ repeated words (decoder loops)
   const out = []; let run = 0, prevE = 0;
@@ -993,7 +1084,7 @@ let EXPORTING = false;
 $('save').onclick = async () => {
   if (EXPORTING || SEL < 0) return; const c = CLIPS[SEL]; EXPORTING = true; stopPlay(); keepAwake(true);
   const note = $('savenote'), pr = $('saveprog'); pr.hidden = false; pr.firstElementChild.style.width = '0%';
-  ISL.start('Saving clip', 'Keep this tab open', () => { CANCEL_EXPORT = true; }, () => show('prev'));
+  const XJ = jobs.start({title: 'Saving clip', sub: 'Clip ' + (SEL + 1) + ' · keep this tab open', onCancel: () => { CANCEL_EXPORT = true; }, onOpen: () => show('prev'), openLabel: 'View'});
   try{
     if (typeof MediaRecorder === 'undefined') throw new Error('This browser cannot record video.');
     const W = 540, H = 960, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
@@ -1009,14 +1100,14 @@ $('save').onclick = async () => {
     await new Promise(res => { const step = () => { if (CANCEL_EXPORT || v.currentTime*1000 >= c.e || v.ended){ res(); return; }
       const t = v.currentTime*1000 - c.s; gn.gain.value = clamp(Math.min(t/60, (c.e - v.currentTime*1000)/180));
       renderFrame(g, v, Math.max(0, t), W, H, c, pages);
-      const pct = clamp(t/(c.e - c.s)); pr.firstElementChild.style.width = Math.round(pct*100) + '%'; ISL.update('Saving clip ' + Math.round(pct*100) + '%', fmt(Math.max(0, t)) + ' of ' + fmt(c.e - c.s), pct); requestAnimationFrame(step); }; step(); });
+      const pct = clamp(t/(c.e - c.s)); pr.firstElementChild.style.width = Math.round(pct*100) + '%'; jobs.update(XJ, {sub: fmt(Math.max(0, t)) + ' of ' + fmt(c.e - c.s), pct}); requestAnimationFrame(step); }; step(); });
     v.pause(); rec.stop(); await done; ac.close();
-    if (CANCEL_EXPORT){ note.textContent = 'Saving cancelled.'; ISL.hide(); return; }
+    if (CANCEL_EXPORT){ note.textContent = 'Saving cancelled.'; jobs.end(XJ, 'cancelled', 'Saving cancelled', 'Clip ' + (SEL + 1)); return; }
     const blob = new Blob(parts, {type: mime.split(';')[0]}); const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm'; const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url; a.download = `cliptic-clip-${SEL+1}.${ext}`; document.body.appendChild(a); a.click(); a.remove();
     note.innerHTML = `Saved <b>${esc(a.download)}</b> (${(blob.size/1048576).toFixed(1)} MB). If nothing downloaded, <a href="${url}" download="${esc(a.download)}" style="color:var(--accent)">tap here</a>.`;
-    ISL.done('Clip saved', `${a.download} · ${(blob.size/1048576).toFixed(1)} MB`, () => show('prev')); notify('Clip saved', a.download, 'cliptic-export');
-  }catch(e){ note.textContent = 'Export failed: ' + (e.message || e); ISL.hide(); }
+    jobs.done(XJ, {title: 'Clip saved', sub: `${a.download} · ${(blob.size/1048576).toFixed(1)} MB`, onOpen: () => show('prev'), label: 'View'}); notify('Clip saved', a.download, 'cliptic-export');
+  }catch(e){ note.textContent = 'Export failed: ' + (e.message || e); jobs.end(XJ, 'error', 'Saving failed', String(e.message || e).slice(0, 120)); }
   finally{ EXPORTING = false; CANCEL_EXPORT = false; pr.hidden = true; keepAwake(false); }
 };
 let CANCEL_EXPORT = false;
@@ -1039,7 +1130,11 @@ if (ib){
     if (DEFERRED){ DEFERRED.prompt(); await DEFERRED.userChoice.catch(()=>{}); DEFERRED = null; ib.hidden = true; }
     else alert(/iphone|ipad|ipod/i.test(navigator.userAgent) ? 'On iPhone/iPad: tap the Share button, then "Add to Home Screen".' : 'Open your browser menu and choose "Install app" or "Add to Home screen".'); };
 }
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) addEventListener('load', async () => {
+  try{ await navigator.serviceWorker.register('sw.js'); await navigator.serviceWorker.ready;
+    // the service worker adds cross-origin-isolation headers; one reload applies them (only before a video is chosen)
+    if (!crossOriginIsolated && !FILE && !sessionStorage.getItem('cliptic.coi')){ sessionStorage.setItem('cliptic.coi', '1'); if (!navigator.serviceWorker.controller) await new Promise(r => { navigator.serviceWorker.addEventListener('controllerchange', r, {once: true}); setTimeout(r, 1500); }); location.reload(); }
+  }catch{} });
 $('go').addEventListener('click', keepStorage);
 $('diagbtn').onclick = async () => {
   const o = $('diag'); o.hidden = false; const L = []; const P = s => { L.push(s); o.textContent = L.join('\n'); };

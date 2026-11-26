@@ -24,7 +24,12 @@ Installable on Android, iPhone, Windows, Mac and Linux (it is a PWA).
 
 The first time, the app asks the browser to keep its storage so the downloaded speech model is not deleted. Allow it if asked.
 
+## Speed
+- Settings, Caption timing: Fast (default) times each phrase and is quicker; Precise times every word.
+- Settings, Multi-threading: uses several CPU cores when the browser allows it. If transcription ever freezes, switch it Off and reload.
+- Picking the spoken language in Studio is faster than auto-detect.
+
 ## Notes
 - First transcription downloads the speech model once (needs internet). Later runs reuse it.
 - Saved clips record in real time. Keep the tab open and in front.
-- When you change files on GitHub, change `CACHE = 'cliptic-v1'` in sw.js to `v2` so phones pick up the update.
+- When you change files on GitHub, change the `CACHE = 'cliptic-v6'` number in sw.js so phones pick up the update.
