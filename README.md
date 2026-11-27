@@ -40,3 +40,12 @@ The first time, the app asks the browser to keep its storage so the downloaded s
 - Templates: Clip gaming and streams (webcam finder + confirm box), Clip long videos, Auto-edit talking video, Captions.
 - Local AI titles (LaMini-Flan-T5 via Transformers.js), editable, with regenerate. Scores and "signals" are content-quality hints, not view predictions.
 - To update on GitHub: upload the changed files (index.html, sw.js, README.md) over the old ones; Render redeploys.
+
+## Update 8
+- Options sheet after choosing a video (length range, clipping mode, clip length, auto headline, language) with the ownership notice.
+- Paste a link to a direct video file you own (MP4/WebM). YouTube and social-site links are refused on purpose.
+- Clip cards show tilted previews of the real clip.
+- Skips music and singing (estimate from the sound; Settings > Speech only).
+- Webcam finder: pick another frame if the webcam is not visible, then search that frame.
+- AI titles can also look at two frames per clip (Settings > AI titles > Text + frames).
+- Topic-aware clip boundaries; audio decoded at 16 kHz; fewer frame samples.
