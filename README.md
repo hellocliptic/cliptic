@@ -33,3 +33,10 @@ The first time, the app asks the browser to keep its storage so the downloaded s
 - First transcription downloads the speech model once (needs internet). Later runs reuse it.
 - Saved clips record in real time. Keep the tab open and in front.
 - When you change files on GitHub, change the `CACHE = 'cliptic-v6'` number in sw.js so phones pick up the update.
+
+## Update 7
+- Videos, results, saved clips and checkpoints are stored in the browser (IndexedDB). Refresh keeps everything; unfinished analysis resumes.
+- Clips tab is a Library of videos; open one to see progress or its clips. Bottom dock navigation.
+- Templates: Clip gaming and streams (webcam finder + confirm box), Clip long videos, Auto-edit talking video, Captions.
+- Local AI titles (LaMini-Flan-T5 via Transformers.js), editable, with regenerate. Scores and "signals" are content-quality hints, not view predictions.
+- To update on GitHub: upload the changed files (index.html, sw.js, README.md) over the old ones; Render redeploys.
