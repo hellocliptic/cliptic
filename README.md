@@ -49,3 +49,13 @@ The first time, the app asks the browser to keep its storage so the downloaded s
 - Webcam finder: pick another frame if the webcam is not visible, then search that frame.
 - AI titles can also look at two frames per clip (Settings > AI titles > Text + frames).
 - Topic-aware clip boundaries; audio decoded at 16 kHz; fewer frame samples.
+
+## Update 9 – redesign pass
+- Bottom dock has a sliding pill indicator; screens slide in direction-aware (respects "reduce motion").
+- Busy dot is now a small badge on the icon corner instead of sitting beside it.
+- Status row is rounded icon pills (Speech, CPU/GPU, On-device).
+- Options sheet is frosted/translucent (shows the page behind it), no green; toggles are neutral.
+- Subtitle styles are live preview cards (rendered with the real caption renderer) instead of text buttons.
+- Segmented controls have a sliding thumb; buttons, panels and inputs are rounder and more consistent.
+- Fixed a horizontal-overflow bug that the new style row would otherwise cause.
+Tested in a desktop Chromium at phone size only, not on a real phone. Re-upload `index.html`, `sw.js`, `README.md`; reload twice so the new service worker takes over.
