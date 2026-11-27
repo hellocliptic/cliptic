@@ -339,7 +339,6 @@ input[type=number],select,.txtin{border-radius:16px;height:50px;background:#0d0d
 #sheet .panel{background:#ffffff10}
 .tog{background:#ffffff2e}.tog[aria-checked=true]{background:var(--fg)}.tog[aria-checked=true] i{background:#09090b}
 .wrap,.wrap>*,.sticky,.ctl,.panel,.strip{min-width:0}.stylerow.seg{max-width:100%;width:100%;contain:inline-size}
-html,body{overflow-x:clip}
 /* dock with a sliding pill */
 .bnav-in{position:relative;background:rgba(18,18,22,.97);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-color:#ffffff14;box-shadow:0 14px 34px rgba(0,0,0,.6),inset 0 1px 0 #ffffff0d}
 .bnav .tab{background:none!important;z-index:1}.bnav .tab[aria-current=true]{color:var(--ctafg)}
@@ -350,6 +349,23 @@ html,body{overflow-x:clip}
 .tab.busy[aria-current=true] .ic::after{background:#09090b;border-color:#fafafa}
 @keyframes pulse{50%{transform:scale(1.35);opacity:.55}}
 @media (prefers-reduced-motion:reduce){.bnav-ind,.seg-th{transition:none!important}.tab.busy .ic::after{animation:none}}
+
+/* ===== v10 ===== */
+.sh-tpl .tpls{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 -20px;padding:2px 20px 6px;overscroll-behavior-x:contain}
+.sh-tpl .tpls::-webkit-scrollbar{display:none}
+.sh-tpl .tpl{flex:none;width:150px;scroll-snap-align:start;padding:9px;gap:8px;background:#ffffff12;border-radius:22px}
+.sh-tpl .tpl b{font-size:14.5px}.sh-tpl .tpl .tt span{display:none}.sh-tpl .tpl-b{height:38px;min-height:38px;font-size:13.5px;border-radius:19px}
+.sh-tpl .tpl[data-on=true]{border-color:#fafafa}
+.sh-tpl .tpls{scroll-snap-type:none}
+.sh-tpl .tpl .tpl-b{background:#ffffff22;color:var(--fg)}
+.sh-tpl .tpl[data-on=true] .tpl-b{background:var(--fg);color:var(--ctafg)}
+.sh-tpl .tpl .tag{display:none}
+#rw-mode{display:none}
+.seg button{flex:1 1 0;min-width:0;padding:0 10px;white-space:normal;line-height:1.15;font-size:15px;height:auto;min-height:44px;text-wrap:balance}
+.btn{padding:0 16px;line-height:1.15}.btns .btn,.btn.sm{font-size:15px}
+html.lock,html.lock body{overflow:hidden!important;overscroll-behavior:none}
+.sh-scroll,.mn-body,#mnbody{overscroll-behavior:contain}
+.chip svg{transition:opacity .2s}
 </style>
 
 <div class="isl" id="isl" data-s="hidden" role="status" aria-live="polite">
@@ -390,13 +406,6 @@ html,body{overflow-x:clip}
   <p class="note" id="linknote" hidden></p>
   <div id="homeerr" class="err" hidden></div>
   <div class="two"><button class="cta" id="go">Get clips</button><button class="cta ol" id="goauto">Auto-edit</button></div>
-  <div><div class="lbl" style="margin-bottom:10px"><span>Templates</span></div>
-  <div class="tpls" id="tpls">
-    <div class="tpl" data-k="stream"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="6" y="8" width="62" height="40" rx="5" fill="#1b1b20"/><rect x="10" y="30" width="20" height="14" rx="3" fill="#2a2a31"/><circle cx="20" cy="36" r="3.4"/><rect x="76" y="6" width="34" height="22" rx="4" fill="#26262c"/><circle cx="93" cy="14" r="4"/><path d="M85 24c2-4 14-4 16 0"/><rect x="76" y="31" width="34" height="32" rx="4" fill="#1b1b20"/><path d="M80 52l8-8 6 6 5-4 8 8"/><path d="M14 58h50" stroke-dasharray="3 4"/></svg></div><div class="tt"><b>Clip gaming and streams</b><span>Finds the best plays and puts your webcam above the gameplay.</span></div><em class="tg">Clipping</em><button class="btn tpl-b" type="button">Use template</button></div>
-    <div class="tpl" data-k="long"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="6" y="14" width="64" height="38" rx="5" fill="#1b1b20"/><path d="M34 26l12 7-12 7z" fill="#cfcfd6"/><path d="M12 60h52" stroke="#55555d"/><path d="M26 60h20" stroke="#fafafa" stroke-width="3"/><rect x="82" y="6" width="14" height="26" rx="3" fill="#26262c"/><rect x="100" y="6" width="14" height="26" rx="3" fill="#26262c"/><rect x="82" y="38" width="14" height="26" rx="3" fill="#26262c"/><rect x="100" y="38" width="14" height="26" rx="3" fill="#fafafa" fill-opacity=".14"/></svg></div><div class="tt"><b>Clip long videos</b><span>Finds hooks and complete moments in podcasts, talks and interviews.</span></div><em class="tg">Clipping</em><button class="btn tpl-b" type="button">Use template</button></div>
-    <div class="tpl" data-k="auto"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="34" y="4" width="52" height="62" rx="7" fill="#1b1b20"/><circle cx="60" cy="24" r="7"/><path d="M47 44c3-9 23-9 26 0"/><rect x="42" y="48" width="36" height="9" rx="4.5" fill="#fafafa" stroke="none"/><path d="M12 14l4 8 8 4-8 4-4 8-4-8-8-4 8-4z" transform="translate(4 2) scale(.7)"/><path d="M100 40l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" transform="translate(-2 -4) scale(.8)"/></svg></div><div class="tt"><b>Auto-edit talking video</b><span>The whole video with a hook title, captions and motion effects.</span></div><em class="tg">Editing</em><button class="btn tpl-b" type="button">Use template</button></div>
-    <div class="tpl" data-k="captions"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="8" y="8" width="104" height="54" rx="6" fill="#1b1b20"/><rect x="26" y="38" width="68" height="12" rx="6" fill="#fafafa" stroke="none"/><rect x="34" y="42" width="22" height="4" rx="2" fill="#09090b" stroke="none"/><rect x="60" y="42" width="26" height="4" rx="2" fill="#8a8a94" stroke="none"/><circle cx="60" cy="22" r="6"/></svg></div><div class="tt"><b>Captions</b><span>Animated captions on the whole video in one tap.</span></div><em class="tg">Editing</em><button class="btn tpl-b" type="button">Use template</button></div>
-  </div></div>
   <button class="cta ol" id="install" hidden type="button">Install Cliptic as an app</button>
   <p class="note">YouTube links are not supported: YouTube does not allow downloading through third-party tools and a web page cannot do it. For your own videos, download them from YouTube Studio and upload the file. Direct links to files you own (MP4 or WebM) work if the host allows it.</p>
 </main>
@@ -551,6 +560,12 @@ html,body{overflow-x:clip}
     <div class="sh-top"><button class="pillb" id="shcancel" type="button">Cancel</button><button class="pillb" id="shdef" type="button">Save as default</button></div>
     <div class="sh-scroll">
       <div class="sh-vid"><img id="shthumb" alt=""><div><b id="shname"></b><span id="shdur"></span></div></div>
+      <div class="sh-tpl"><div class="lbl"><span>Choose a template</span></div><div class="tpls" id="tpls">
+    <div class="tpl" data-k="stream"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="6" y="8" width="62" height="40" rx="5" fill="#1b1b20"/><rect x="10" y="30" width="20" height="14" rx="3" fill="#2a2a31"/><circle cx="20" cy="36" r="3.4"/><rect x="76" y="6" width="34" height="22" rx="4" fill="#26262c"/><circle cx="93" cy="14" r="4"/><path d="M85 24c2-4 14-4 16 0"/><rect x="76" y="31" width="34" height="32" rx="4" fill="#1b1b20"/><path d="M80 52l8-8 6 6 5-4 8 8"/><path d="M14 58h50" stroke-dasharray="3 4"/></svg></div><div class="tt"><b>Clip gaming and streams</b><span>Finds the best plays and puts your webcam above the gameplay.</span></div><em class="tg">Clipping</em><button class="btn tpl-b" type="button">Use template</button></div>
+    <div class="tpl" data-k="long"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="6" y="14" width="64" height="38" rx="5" fill="#1b1b20"/><path d="M34 26l12 7-12 7z" fill="#cfcfd6"/><path d="M12 60h52" stroke="#55555d"/><path d="M26 60h20" stroke="#fafafa" stroke-width="3"/><rect x="82" y="6" width="14" height="26" rx="3" fill="#26262c"/><rect x="100" y="6" width="14" height="26" rx="3" fill="#26262c"/><rect x="82" y="38" width="14" height="26" rx="3" fill="#26262c"/><rect x="100" y="38" width="14" height="26" rx="3" fill="#fafafa" fill-opacity=".14"/></svg></div><div class="tt"><b>Clip long videos</b><span>Finds hooks and complete moments in podcasts, talks and interviews.</span></div><em class="tg">Clipping</em><button class="btn tpl-b" type="button">Use template</button></div>
+    <div class="tpl" data-k="auto"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="34" y="4" width="52" height="62" rx="7" fill="#1b1b20"/><circle cx="60" cy="24" r="7"/><path d="M47 44c3-9 23-9 26 0"/><rect x="42" y="48" width="36" height="9" rx="4.5" fill="#fafafa" stroke="none"/><path d="M12 14l4 8 8 4-8 4-4 8-4-8-8-4 8-4z" transform="translate(4 2) scale(.7)"/><path d="M100 40l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" transform="translate(-2 -4) scale(.8)"/></svg></div><div class="tt"><b>Auto-edit talking video</b><span>The whole video with a hook title, captions and motion effects.</span></div><em class="tg">Editing</em><button class="btn tpl-b" type="button">Use template</button></div>
+    <div class="tpl" data-k="captions"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="8" y="8" width="104" height="54" rx="6" fill="#1b1b20"/><rect x="26" y="38" width="68" height="12" rx="6" fill="#fafafa" stroke="none"/><rect x="34" y="42" width="22" height="4" rx="2" fill="#09090b" stroke="none"/><rect x="60" y="42" width="26" height="4" rx="2" fill="#8a8a94" stroke="none"/><circle cx="60" cy="22" r="6"/></svg></div><div class="tt"><b>Captions</b><span>Animated captions on the whole video in one tap.</span></div><em class="tg">Editing</em><button class="btn tpl-b" type="button">Use template</button></div>
+  </div></div>
       <p class="sh-copy">Using video you don't own may violate copyright laws. By continuing, you confirm this is your own original content.</p>
       <div class="rows">
         <button class="srow" id="rw-range" type="button"><span>Video length <em class="chip2">Faster</em></span><span class="val"><i class="sep"></i><b id="rv-range">Full</b></span></button>
@@ -580,7 +595,7 @@ html,body{overflow-x:clip}
 <div id="menu" class="sheet" hidden><div class="sheet-bg" id="menubg"></div><div class="sheet-p mini"><div class="mn-t" id="mntitle"></div><div class="mn-body" id="mnbody"></div></div></div>
 <nav class="bnav" aria-label="Main"><div class="bnav-in"><i class="bnav-ind"></i>
   <button class="tab" data-t="home" aria-current="true"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M12 9v6M9 12h6"/></svg></span><span>Studio</span></button>
-  <button class="tab" data-t="clips"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 4v5M13 4v5M10 13l5 3-5 3z"/></svg></span><span>Clips</span></button>
+  <button class="tab" data-t="clips"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg></span><span>Clips</span></button>
   <button class="tab" data-t="set"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span>Settings</span></button>
 </div></nav>
 <div class="wrap" style="padding-top:8px"><footer><span>On-device</span><span>No account</span><span>No upload</span></footer></div>
@@ -756,6 +771,10 @@ function syncSheet(){
   $('headtog').setAttribute('aria-checked', String($('aititle').value !== 'off')); $('rv-lang').textContent = $('lang').selectedOptions[0].textContent;
   $('shest').textContent = estimate(); $('shgo').textContent = isWhole(TPL) ? 'Start editing' : 'Get clips'; applyCam();
 }
+function syncLock(){ document.documentElement.classList.toggle('lock', !$('sheet').hidden || !$('menu').hidden); }
+['sheet', 'menu'].forEach(id => new MutationObserver(syncLock).observe($(id), {attributes: true, attributeFilter: ['hidden']}));
+const noBg = e => { if (!e.target.closest('.sh-scroll, #mnbody, .tpls')) e.preventDefault(); };
+['sheet', 'menu'].forEach(id => { $(id).addEventListener('touchmove', noBg, {passive: false}); $(id).addEventListener('wheel', noBg, {passive: false}); });
 function openSheet(){ const PD = PENDING; if (!PD) return; $('shthumb').src = PD.thumb || ''; $('shname').textContent = PD.meta.name; $('shdur').textContent = fmt(PD.meta.dur); syncSheet(); $('sheet').hidden = false; document.body.style.overflow = 'hidden'; }
 function closeSheet(){ $('sheet').hidden = true; document.body.style.overflow = ''; }
 $('shcancel').onclick = $('sheetbg').onclick = () => clearPending();
@@ -1588,7 +1607,11 @@ const fx_unused = 0;
 const MODELS = {fast: ['onnx-community/whisper-tiny_timestamped', 'Xenova/whisper-tiny'], balanced: ['onnx-community/whisper-base_timestamped', 'Xenova/whisper-base']}, TJS = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0/+esm';
 const ASRS = {};
 function chip(id, state, text){ const c = $(id); c.className = 'chip ' + state; $(id + 'T').textContent = text; }
-chip('chipDev', '', navigator.gpu ? 'GPU' : 'CPU');
+const IC_CPU = '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>', IC_GPU = '<rect x="2" y="7" width="20" height="10" rx="2"/><circle cx="9" cy="12" r="2.6"/><path d="M15 10h4M15 14h4M5 17v3M9 17v3"/>';
+function devChip(t){ chip('chipDev', '', t); const sv = $('chipDev').querySelector('svg'); if (sv) sv.innerHTML = /GPU/.test(t) ? IC_GPU : IC_CPU; }
+function devGuess(){ const gm = $('gpu').value || 'auto', mob = /android|iphone|ipad|ipod/i.test(navigator.userAgent); return navigator.gpu && (gm === 'on' || (gm === 'auto' && !mob)) ? 'GPU' : 'CPU'; }
+devChip(devGuess());
+$('gpu').addEventListener('change', () => { for (const k in ASRS) delete ASRS[k]; devChip(devGuess()); chip('chipModel', '', 'Speech: idle'); });
 const ASRL = {}; let ASR_PROG = () => {};
 let TP = null;
 const getT = () => TP || (TP = import(window.__tjsUrl || TJS).then(T => { T.env.allowLocalModels = false; T.env.useBrowserCache = true; return T; }).catch(e => { TP = null; throw e; }));
@@ -1622,7 +1645,7 @@ async function loadAsrInner(mode){
     const key = keyOf(model, opt); if (seen.has(key)) continue; seen.add(key);
     const tag = `${model.split('/')[1]} / ${opt.device}${typeof opt.dtype === 'string' ? '/' + opt.dtype : ''}`;
     for (let attempt = 0; attempt < 2; attempt++){
-      try{ setProxy(opt.device === 'wasm' && ORT.proxy); Object.keys(files).forEach(k => delete files[k]); onProg(0, 'Loading ' + tag + (threads > 1 ? ' (' + threads + ' threads)' : '') + '…'); ASRS[mode] = await T.pipeline('automatic-speech-recognition', model, {...opt, progress_callback: cb}); chip('chipModel', 'ok', 'Speech: ready'); chip('chipDev', '', opt.device === 'webgpu' ? 'GPU' : threads > 1 ? 'CPU ×' + threads : 'CPU'); try{ localStorage.setItem('cliptic.asr.' + mode, key); }catch{} return ASRS[mode]; }
+      try{ setProxy(opt.device === 'wasm' && ORT.proxy); Object.keys(files).forEach(k => delete files[k]); onProg(0, 'Loading ' + tag + (threads > 1 ? ' (' + threads + ' threads)' : '') + '…'); ASRS[mode] = await T.pipeline('automatic-speech-recognition', model, {...opt, progress_callback: cb}); chip('chipModel', 'ok', 'Speech: ready'); devChip(opt.device === 'webgpu' ? 'GPU' : threads > 1 ? 'CPU ×' + threads : 'CPU'); try{ localStorage.setItem('cliptic.asr.' + mode, key); }catch{} return ASRS[mode]; }
       catch(e){ let msg = String(e && e.message || e); if (/^\d+$/.test(msg.trim())) msg = 'internal error code ' + msg + ' (usually out of memory)'; errs.push(tag + (threads > 1 ? ' [' + threads + ' threads]' : '') + ': ' + msg.slice(0, 200));
         if (attempt === 0 && ORT.proxy && opt.device === 'wasm'){ ORT.proxy = false; try{ localStorage.setItem('cliptic.proxy', 'off'); }catch{} let again = false; try{ again = !sessionStorage.getItem('cliptic.pr'); sessionStorage.setItem('cliptic.pr', '1'); }catch{} if (again){ location.reload(); return new Promise(() => {}); } continue; }
         if (attempt === 0 && threads > 1 && opt.device === 'wasm'){ setThreads(1); try{ localStorage.setItem('cliptic.threads', 'off'); }catch{} continue; } break; }
@@ -1728,10 +1751,13 @@ document.querySelectorAll('.seg:not(.stylerow)').forEach(seg => {
   if (window.ResizeObserver) new ResizeObserver(() => segSync(seg)).observe(seg); segSync(seg);
 });
 const SNAMES = {POP: 'Pop', HORMOZI: 'Bold', KARAOKE: 'Karaoke', BOX: 'Box', GLOW: 'Glow', CLASSIC: 'Classic', YELLOW: 'Yellow', MINIMAL: 'Minimal'};
+let STYLE_BG = null;
+function snapStyleBg(){ if (screen !== 'prev' || !PV.videoWidth) return; const cv = document.createElement('canvas'); cv.width = 184; cv.height = 327; const g = cv.getContext('2d'), vw = PV.videoWidth, vh = PV.videoHeight, sc = Math.max(184/vw, 327/vh); try{ g.drawImage(PV, (184 - vw*sc)/2, (327 - vh*sc)/2, vw*sc, vh*sc); }catch{ return; } STYLE_BG = cv; buildStyleCards(); }
+PV.addEventListener('seeked', () => { clearTimeout(snapStyleBg.t); snapStyleBg.t = setTimeout(snapStyleBg, 120); });
 function paintStyleCard(cv, k){
-  const g = cv.getContext('2d'), W = cv.width, H = cv.height, gr = g.createLinearGradient(0, 0, W, H);
-  gr.addColorStop(0, '#3b414d'); gr.addColorStop(.55, '#22252c'); gr.addColorStop(1, '#131418'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
-  g.fillStyle = 'rgba(255,255,255,.07)'; g.beginPath(); g.arc(W*.5, H*.3, W*.24, 0, 7); g.fill(); g.beginPath(); g.ellipse(W*.5, H*.52, W*.34, H*.1, 0, 0, 7); g.fill();
+  const g = cv.getContext('2d'), W = cv.width, H = cv.height;
+  if (STYLE_BG){ g.drawImage(STYLE_BG, 0, 0, W, H); g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(0, 0, W, H); }
+  else { const gr = g.createLinearGradient(0, 0, W, H); gr.addColorStop(0, '#3b414d'); gr.addColorStop(.55, '#22252c'); gr.addColorStop(1, '#131418'); g.fillStyle = gr; g.fillRect(0, 0, W, H); g.fillStyle = 'rgba(255,255,255,.07)'; g.beginPath(); g.arc(W*.5, H*.3, W*.24, 0, 7); g.fill(); g.beginPath(); g.ellipse(W*.5, H*.52, W*.34, H*.1, 0, 0, 7); g.fill(); }
   const keep = $('style').value; $('style').value = k;
   try{ const ws = [{t: 'THIS', s: 0, e: 300}, {t: 'WILL', s: 300, e: 600}, {t: 'GO', s: 600, e: 900}, {t: 'VIRAL', s: 900, e: 1300}]; drawCaption(g, buildPages(ws, k)[0], 950, W, H, H*.72); }catch{} finally{ $('style').value = keep; }
 }

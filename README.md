@@ -59,3 +59,12 @@ The first time, the app asks the browser to keep its storage so the downloaded s
 - Segmented controls have a sliding thumb; buttons, panels and inputs are rounder and more consistent.
 - Fixed a horizontal-overflow bug that the new style row would otherwise cause.
 Tested in a desktop Chromium at phone size only, not on a real phone. Re-upload `index.html`, `sw.js`, `README.md`; reload twice so the new service worker takes over.
+
+## Update 10
+- Home page no longer lists templates. After you pick a video, the options sheet opens with "Choose a template" cards at the top.
+- Segmented buttons no longer overflow: long labels wrap inside their button.
+- Dock "Clips" icon is now scissors.
+- Subtitle style previews use a frame of the current video as their background.
+- The CPU/GPU pill follows the Settings choice (icon and label), and changing it makes the speech model reload with that device. After a model loads, the pill shows the device actually used.
+- The page behind the options sheet and menus no longer scrolls while they are open.
+Tested in a desktop Chromium at phone size, not on a real phone.
