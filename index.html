@@ -561,6 +561,24 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
 .phone.gd::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:6;
  background:linear-gradient(#ff453a38,#ff453a38) top/100% 11% no-repeat,linear-gradient(#ff453a38,#ff453a38) bottom/100% 24% no-repeat,linear-gradient(#ff453a38,#ff453a38) right 0 top 46%/15% 30% no-repeat;
  box-shadow:inset 0 0 0 1px #ff453a66;border-radius:inherit}
+
+/* v20 */
+.srow{min-height:64px!important}.sh-scroll{padding-bottom:26px!important}
+.srow>span:first-child{line-height:1.2}
+.trm{padding:12px 14px;border-radius:16px;background:#ffffff0a;color:#d6d6dc;font-size:13.5px;line-height:1.5}.trm.ok{border:1px solid #3ddc9744}.trm.busy{opacity:.8}
+.con{display:grid;gap:12px}.con-r{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.info-p.wide{width:min(100%,720px)}
+.trc{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:#c4c4cc;line-height:1.45;padding:12px;border-radius:16px;background:#ffffff0a}.trc input{margin-top:3px;accent-color:#fafafa;width:18px;height:18px;flex:none}
+.trl{display:grid;gap:8px}.trl button{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:56px;padding:0 16px;border-radius:16px;border:0;background:#ffffff12;color:#f4f4f5;font:550 15px var(--font);cursor:pointer;text-align:left}.trl button span{color:#9a9aa4;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.tm-wrap{position:relative;border-radius:16px;overflow:hidden;background:#000;touch-action:none;user-select:none}.tm-wrap canvas{display:block;width:100%;height:auto;max-height:46vh;object-fit:contain;margin:0 auto}
+.tm-r{position:absolute;border:2px solid #3ddc97;background:#3ddc9722;border-radius:8px;box-shadow:0 0 0 9999px #0006;cursor:move}.tm-h{position:absolute;right:-12px;bottom:-12px;width:26px;height:26px;border-radius:50%;background:#3ddc97;border:3px solid #0b0b0e;cursor:nwse-resize}
+.tm-wrap.none .tm-r{display:none}
+#tmseek{width:100%;accent-color:#fafafa}
+.admerr{margin:0;color:#ff8a80;font-size:13.5px}
+.adm-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.adm-g div{background:#ffffff0a;border-radius:16px;padding:12px}.adm-g b{display:block;font:750 22px var(--font);color:#fff}.adm-g span{font-size:12px;color:#9a9aa4}
+.adm-t{display:grid;gap:8px}.adm-row{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:8px 0;border-bottom:1px solid #ffffff10}.adm-row span:last-child{color:#9a9aa4;text-align:right}
+.adm-ex{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.adm-ex figure{margin:0;position:relative;border-radius:14px;overflow:hidden;background:#000;font-size:11.5px}.adm-ex img{display:block;width:100%}.adm-ex figcaption{padding:6px 8px;color:#b4b4bd;display:flex;justify-content:space-between;gap:6px}
+.adm-ex .bx{position:absolute;border:2px solid #3ddc97}.adm-ex .xx{position:absolute;right:4px;top:4px;width:24px;height:24px;border-radius:50%;border:0;background:#000a;color:#fff;cursor:pointer}
 </style>
 
 <div class="isl" id="isl" data-s="hidden" role="status" aria-live="polite">
@@ -660,6 +678,24 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
   <div class="cr-st"><div><b class="cr-v">0</b><span>videos processed</span></div><div><b class="cr-c">0</b><span>clips saved</span></div></div>
 </div>
 <div class="info" id="info" hidden role="dialog" aria-modal="true" aria-labelledby="infot"><div class="info-p"><div class="info-h"><b id="infot"></b><button class="btn ghost sm" id="infox" type="button">Close</button></div><div class="info-b" id="infob"></div></div></div>
+<div class="info" id="trn" hidden role="dialog" aria-modal="true" aria-label="Add training examples"><div class="info-p wide">
+  <div class="info-h"><b>Add training examples</b><button class="btn ghost sm" id="trx" type="button">Close</button></div>
+  <div id="tr1" class="info-b"><p>Choose a clip from the video you have open.</p>
+    <label class="trc" id="trconsent"><input type="checkbox" id="trok"><span>I own this video or have the right to use it, and I am happy for these examples to be stored on this device.</span></label>
+    <div id="tr1list" class="trl"></div></div>
+  <div id="tr2" class="info-b" hidden><p id="trhint">Drag the box over the webcam. Pull the corner to resize it. Use the slider to pick a different moment.</p>
+    <div class="tm-wrap" id="tmwrap"><canvas id="tmc"></canvas><div class="tm-r" id="tmr"><i class="tm-h" id="tmh"></i></div></div>
+    <input type="range" id="tmseek" min="0" max="1000" value="150" aria-label="Moment in clip">
+    <div class="con-r"><button class="btn" id="tmyes" type="button">Webcam is here, add</button><button class="btn ghost" id="tmno" type="button">No webcam, add</button></div>
+    <button class="btn ghost sm" id="tmback" type="button">Choose another clip</button></div>
+  <div id="tr3" class="info-b" hidden><p><b id="trdone">Added.</b></p><p id="trtotal"></p><div class="con-r"><button class="btn" id="tmmore" type="button">Add another frame</button><button class="btn ghost" id="tmfin" type="button">Done</button></div></div>
+</div></div>
+<div class="info" id="adm" hidden role="dialog" aria-modal="true" aria-label="Admin"><div class="info-p wide">
+  <div class="info-h"><b id="admt">Admin sign in</b><button class="btn ghost sm" id="admx" type="button">Close</button></div>
+  <form id="admlogin" class="info-b" autocomplete="off"><input class="txtin" id="admem" type="email" placeholder="Email" autocomplete="off"><input class="txtin" id="admpw" type="password" placeholder="Password" autocomplete="off"><p id="admerr" class="admerr" hidden></p><button class="btn" id="admgo" type="submit">Sign in</button>
+    <p class="note">This screen only shows data that is stored on this device.</p></form>
+  <div id="admbody" class="info-b" hidden></div>
+</div></div>
 <!-- VIDEO (progress or clips) -->
 <main id="s-proj" class="wrap" hidden style="padding-top:0">
   <button class="back" id="projback">‹ Videos</button>
@@ -806,6 +842,17 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
 <!-- SETTINGS -->
 <main id="s-set" class="wrap" hidden style="padding-top:8px">
   <div><p class="eyebrow">Preferences</p><h1>Settings</h1></div>
+  <section class="panel con"><div class="lbl"><span>Contribute</span><em class="tag">Beta</em></div>
+    <p class="note" style="margin:0">Teach Cliptic where webcams are. Your examples train a small webcam finder that runs on this device and is used the next time you add a gaming or stream video. Varied examples (different games, layouts, moments) help most.</p>
+    <div class="con-r"><button class="btn" id="trbtn" type="button">Add training examples</button><span class="mname" id="trcount">No examples yet</span></div>
+    <div class="trm" id="trmodel">Webcam finder: built-in rules (no training yet)</div>
+    <div class="lbl"><span>Use my trained finder</span></div>
+    <div class="seg" id="seg-camon"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
+    <select id="camon" class="hid"><option value="on">on</option><option value="off">off</option></select>
+    <div class="con-r"><button class="btn ghost sm" id="trretrain" type="button">Retrain now</button><button class="btn ghost sm" id="trreset" type="button">Reset finder</button></div>
+    <p class="note">Everything stays on this device. This tunes one feature (finding the webcam box). It does not change speech, captions or any other part of the app, and it needs real examples to help.</p>
+    <button class="btn ghost sm" id="admbtn" type="button">Admin</button>
+  </section>
   <section class="panel crs"><div class="lbl"><span>Credits</span><em class="tag">Beta</em></div>
     <div class="crs-r"><span class="crs-i"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c-2-2.6-3.5-4-5.5-4a4 4 0 100 8c2 0 3.5-1.4 5.5-4s3.5-4 5.5-4a4 4 0 110 8c-2 0-3.5-1.4-5.5-4z"/></svg></span><div class="acct-t"><b>Unlimited</b><span>No limits during the beta</span></div></div>
     <div class="cr-bar"><i></i></div>
@@ -1126,6 +1173,53 @@ applyLen();
 const CAM = {rect: null};
 /* The webcam overlay is a rectangle whose border stays put while the game behind it changes: find edges that persist
    across frames, then look in the four corners for the rectangle whose four sides are best covered by them. */
+
+/* ---- learnable webcam finder: scores candidate boxes with a small logistic model; starts equal to the built-in rule ---- */
+const CAM_AR = [4/3, 16/9, 1, 3/2], CAM_W0 = [-4.5, 3.6, 2.4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], NF = 15;
+const sigm = z => 1/(1 + Math.exp(-z));
+const CAMM = { get(){ try{ const m = JSON.parse(localStorage.getItem('cliptic.cammodel')); return m && m.w && m.w.length === NF ? m : null; }catch{ return null; } }, set(m){ try{ if (m) localStorage.setItem('cliptic.cammodel', JSON.stringify(m)); else localStorage.removeItem('cliptic.cammodel'); }catch{} },
+  on(){ try{ return localStorage.getItem('cliptic.camon') !== '0'; }catch{ return true; } }, active(){ const m = this.get(); return m && m.use && this.on() ? m : null; } };
+function camCandidates(D, W, H, step, mnMin){
+  const S = W + 1, I = new Int32Array(S*(H + 1));
+  for (let y = 0; y < H; y++){ let row = 0; for (let x = 0; x < W; x++){ row += D[y*W + x]; I[(y + 1)*S + x + 1] = I[y*S + x + 1] + row; } }
+  const box = (x0, y0, x1, y1) => I[y1*S + x1] - I[y0*S + x1] - I[y1*S + x0] + I[y0*S + x0], out = [];
+  for (let cor = 0; cor < 4; cor++) for (let w = 36; w <= 130; w += 3) for (let ai = 0; ai < 4; ai++){ const h = Math.round(w/CAM_AR[ai]); if (h < 24 || h > H*.5) continue;
+    for (let dx = 1; dx <= 44; dx += step) for (let dy = 1; dy <= 44; dy += step){ const x0 = cor & 1 ? W - dx - w : dx, y0 = cor & 2 ? H - dy - h : dy; if (x0 < 1 || y0 < 1 || x0 + w >= W - 1 || y0 + h >= H - 1) continue;
+      let a = 0, b = 0, c = 0, e = 0; for (let x = x0; x < x0 + w; x++){ a += D[y0*W + x]; b += D[(y0 + h)*W + x]; } for (let y = y0; y < y0 + h; y++){ c += D[y*W + x0]; e += D[y*W + x0 + w]; }
+      const s0 = a/w, s1 = b/w, s2 = c/h, s3 = e/h, mn = Math.min(s0, s1, s2, s3); if (mn < mnMin) continue; const mean = (s0 + s1 + s2 + s3)/4, inner = box(x0 + 2, y0 + 2, x0 + w - 2, y0 + h - 2)/Math.max(1, (w - 4)*(h - 4));
+      const f = new Float32Array(NF); f[0] = 1; f[1] = mean; f[2] = mn; f[3 + cor] = 1; f[7] = w/W*3; f[8 + ai] = 1; f[12] = (dx - 1)/43; f[13] = (dy - 1)/43; f[14] = inner*3; out.push({x: x0, y: y0, w, h, f}); } }
+  return out;
+}
+const camDot = (w, f) => { let z = 0; for (let k = 0; k < NF; k++) z += w[k]*f[k]; return z; };
+function camPick(D, W, H, w){ const cs = camCandidates(D, W, H, 2, .35); let best = null, bz = -1e9; for (const c of cs){ const z = camDot(w, c.f); if (z > bz){ bz = z; best = c; } } return best ? {x: best.x, y: best.y, w: best.w, h: best.h, conf: sigm(bz)} : null; }
+function camIou(c, r, W, H){ const ax = c.x/W, ay = c.y/H, aw = c.w/W, ah = c.h/H, x1 = Math.max(ax, r.x), y1 = Math.max(ay, r.y), x2 = Math.min(ax + aw, r.x + r.w), y2 = Math.min(ay + ah, r.y + r.h), i = Math.max(0, x2 - x1)*Math.max(0, y2 - y1); return i/(aw*ah + r.w*r.h - i); }
+const packD = D => { const o = new Uint8Array(Math.ceil(D.length/8)); for (let i = 0; i < D.length; i++) if (D[i]) o[i >> 3] |= 1 << (i & 7); return o; };
+const unpackD = (p, n) => { const D = new Uint8Array(n); for (let i = 0; i < n; i++) D[i] = (p[i >> 3] >> (i & 7)) & 1; return D; };
+async function persistMapAt(v, around){
+  const vw = v.videoWidth, vh = v.videoHeight, dur = v.duration, W = 320, H = Math.max(90, Math.round(W*vh/vw)), K = 8; const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d', {willReadFrequently: true}); const edge = new Float32Array(W*H); let nf = 0;
+  for (let k = 0; k < K; k++){ const t = clamp(around + (k - (K - 1)/2)*.6, 0, dur - .1); try{ await new Promise((res, rej) => { const to = setTimeout(() => rej(new Error('seek')), 5000); v.onseeked = () => { clearTimeout(to); res(); }; v.currentTime = t; }); }catch{ continue; }
+    g.drawImage(v, 0, 0, W, H); const d = g.getImageData(0, 0, W, H).data, l = new Uint8Array(W*H); for (let p = 0, i = 0; i < l.length; p += 4, i++) l[i] = (d[p]*.299 + d[p + 1]*.587 + d[p + 2]*.114)|0;
+    for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++){ const i = y*W + x; if (Math.abs(l[i + 1] - l[i - 1]) + Math.abs(l[i + W] - l[i - W]) > 30) edge[i]++; } nf++; await tick(); }
+  if (nf < 4) return null; const M = new Uint8Array(W*H), D = new Uint8Array(W*H); for (let i = 0; i < M.length; i++) M[i] = edge[i]/nf >= .7 ? 1 : 0;
+  for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++){ const i = y*W + x; D[i] = M[i] | M[i - 1] | M[i + 1] | M[i - W] | M[i + W]; } return {D, W, H};
+}
+function fitCam(S){ const w = Float32Array.from(CAM_W0), n = S.length; let np = 0; for (const q of S) np += q.y; const pw = np ? Math.min(30, Math.max(1, (n - np)/np*.5)) : 1;
+  for (let ep = 0; ep < 220; ep++){ const g = new Float32Array(NF); let tot = 0; for (const q of S){ const p = sigm(camDot(w, q.f)), wt = q.y ? pw : 1, d = (p - q.y)*wt; tot += wt; for (let k = 0; k < NF; k++) g[k] += d*q.f[k]; } for (let k = 0; k < NF; k++) w[k] -= .8*(g[k]/tot + .02*(w[k] - CAM_W0[k])); }
+  return w; }
+function camSamples(d){ const r = d.x.cam, cs = d.cands; if (!cs.length) return r ? null : []; const sc = cs.map(c => ({c, i: r ? camIou(c, r, d.W, d.H) : 0}));
+  let pos = r ? sc.filter(q => q.i >= .55) : []; if (r && !pos.length){ const b = sc.reduce((m, q) => q.i > m.i ? q : m, sc[0]); if (b.i >= .35) pos = [b]; else return null; }
+  const neg = sc.filter(q => q.i < .25).map(q => ({q, z: camDot(CAM_W0, q.c.f)})).sort((a, b) => b.z - a.z), hard = neg.slice(0, 200), rest = neg.slice(200); const rnd = []; for (let i = 0; i < 100 && rest.length; i++) rnd.push(rest[Math.floor(Math.random()*rest.length)]);
+  return [...pos.map(q => ({f: q.c.f, y: 1})), ...[...hard, ...rnd].map(o => ({f: o.q.c.f, y: 0}))]; }
+function camHit(d, w){ let best = null, bz = -1e9; for (const c of d.cands){ const z = camDot(w, c.f); if (z > bz){ bz = z; best = c; } } const r = d.x.cam; return r ? !!best && camIou(best, r, d.W, d.H) >= .5 : (!best || sigm(bz) < .5); }
+async function trainCam(setMsg){
+  const ex = TRL.get().filter(x => x.dw && x.dh), data = [];
+  for (let i = 0; i < ex.length; i++){ const x = ex[i]; setMsg && setMsg(`Preparing example ${i + 1} of ${ex.length}…`); try{ const bl = await DB.getBlob('d:' + x.id); if (!bl) continue; const D = unpackD(new Uint8Array(await bl.arrayBuffer()), x.dw*x.dh); const d = {x, W: x.dw, H: x.dh, cands: camCandidates(D, x.dw, x.dh, 3, .3)}; d.S = camSamples(d); data.push(d); }catch{} await tick(); }
+  const use = data.filter(d => d.S !== null); const skipped = data.length - use.length; if (use.length < 2) return {n: use.length, skipped, tooFew: true};
+  setMsg && setMsg('Training…'); await tick(); const held = use.length >= 6; let learned = 0, base = 0;
+  for (let i = 0; i < use.length; i++){ base += camHit(use[i], CAM_W0) ? 1 : 0; if (held){ const w = fitCam(use.filter((_, j) => j !== i).flatMap(d => d.S)); learned += camHit(use[i], w) ? 1 : 0; } if (i % 3 === 2) await tick(); }
+  const w = fitCam(use.flatMap(d => d.S)); if (!held) for (const d of use) learned += camHit(d, w) ? 1 : 0;
+  const prev = CAMM.get(); return {w: Array.from(w), n: use.length, skipped, base, learned, total: use.length, held, ver: (prev ? prev.ver : 0) + 1, ts: Date.now(), use: learned >= base};
+}
 async function detectCam(file, around){
   const url = URL.createObjectURL(file), v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = url;
   try{
@@ -1148,6 +1242,7 @@ async function detectCam(file, around){
     if (nf < 4) return {rect: null, conf: 0, frame: keep};
     const D = new Uint8Array(W*H), M = new Uint8Array(W*H); for (let i = 0; i < M.length; i++) M[i] = edge[i]/nf >= .7 ? 1 : 0;
     for (let y = 1; y < H-1; y++) for (let x = 1; x < W-1; x++){ const i = y*W + x; D[i] = M[i] | M[i-1] | M[i+1] | M[i-W] | M[i+W]; }
+    const MD = CAMM.active(); if (MD){ const r = camPick(D, W, H, MD.w); return r ? {rect: {x: r.x/W, y: r.y/H, w: r.w/W, h: r.h/H}, conf: r.conf, frame: keep} : {rect: null, conf: 0, frame: keep}; }
     const cands = [];
     for (let cor = 0; cor < 4; cor++){
       for (let w = 36; w <= 130; w += 3){
@@ -2521,10 +2616,93 @@ $('musrm').onclick = () => { musStop(); MUS.buf = null; $('musname').textContent
 $('musvol').addEventListener('input', () => { if (MUS.cur) MUS.cur.g.gain.value = musVol(); });
 $('speed').addEventListener('change', () => { if (playing) PV.playbackRate = +$('speed').value || 1; });
 $('guides').addEventListener('change', () => { const p = document.querySelector('.phone'); if (p) p.classList.toggle('gd', $('guides').value === 'on'); });
+
+/* ================= contribute (training examples, stored on this device) and admin view ================= */
+const TRL = { get(){ try{ return JSON.parse(localStorage.getItem('cliptic.train')) || []; }catch{ return []; } }, set(a){ try{ localStorage.setItem('cliptic.train', JSON.stringify(a)); }catch{} } };
+const paintTr = () => { const n = TRL.get().length; $('trcount').textContent = n ? n + ' example' + (n > 1 ? 's' : '') + ' added' : 'No examples yet'; };
+paintTr();
+
+(() => {
+  const box = $('trmodel'); const say = (t, cls) => { box.textContent = t; box.className = 'trm' + (cls ? ' ' + cls : ''); };
+  window.paintModel = () => { const m = CAMM.get(), n = TRL.get().length; if (!m){ say(n ? `Webcam finder: built-in rules. ${n} example${n > 1 ? 's' : ''} saved, not trained yet.` : 'Webcam finder: built-in rules (no training yet)'); return; }
+    say(`Webcam finder v${m.ver}, trained on ${m.n} example${m.n > 1 ? 's' : ''}. It found the right box in ${m.learned} of ${m.total} (${m.held ? 'tested on examples it had not seen' : 'tested on its own training examples, so treat this as optimistic'}); the built-in rule got ${m.base} of ${m.total}.${m.use ? '' : ' Not used yet: it did not beat the built-in rule.'}${m.skipped ? ` ${m.skipped} example${m.skipped > 1 ? 's were' : ' was'} skipped (box not near a corner).` : ''}`, m.use && CAMM.on() ? 'ok' : ''); };
+  let busy = false;
+  window.retrainCam = async () => { if (busy) return; busy = true; try{ const r = await trainCam(t => say(t, 'busy')); if (r && r.w){ CAMM.set(r); } else if (r && r.tooFew){ say(`Need at least 2 usable examples to train (have ${r.n}). Add a few more, ideally from different videos.`); busy = false; return; } paintModel(); }catch(e){ say('Training failed: ' + (e.message || e)); } busy = false; };
+  $('trretrain').onclick = retrainCam;
+  $('trreset').onclick = () => { if (!confirm('Reset the trained webcam finder? Your saved examples are kept.')) return; CAMM.set(null); paintModel(); };
+  $('camon').addEventListener('change', () => { try{ localStorage.setItem('cliptic.camon', $('camon').value === 'off' ? '0' : '1'); }catch{} paintModel(); });
+  const on = CAMM.on(); document.querySelectorAll('#seg-camon button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (on ? 'on' : 'off')))); $('camon').value = on ? 'on' : 'off';
+  paintModel();
+})();
+(() => {
+  const trn = $('trn'); const T = {clip: null, vid: null, rect: null, idx: -1};
+  const step = n => { $('tr1').hidden = n !== 1; $('tr2').hidden = n !== 2; $('tr3').hidden = n !== 3; };
+  const close = () => { trn.hidden = true; if (T.vid){ T.vid.removeAttribute('src'); T.vid.load(); T.vid = null; } };
+  $('trx').onclick = close; trn.addEventListener('pointerdown', e => { if (e.target === trn) close(); });
+  $('trbtn').onclick = () => { trn.hidden = false; step(1); const list = $('tr1list');
+    if (!META || !META.url || !CLIPS.length){ $('trconsent').hidden = true; list.innerHTML = '<p>Open a processed video first (Clips tab), then come back here.</p>'; return; }
+    $('trconsent').hidden = false; $('trok').checked = localStorage.getItem('cliptic.trc') === '1'; $('trconsent').hidden = $('trok').checked;
+    list.innerHTML = CLIPS.map((c, i) => `<button type="button" data-i="${i}"><b>Clip ${i + 1}</b><span>${esc((c.meta && c.meta.title) || 'Clip')} · ${fmt(c.e - c.s)}</span></button>`).join(''); };
+  $('tr1list').addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; if (!$('trok').checked && $('trconsent').hidden === false){ $('trconsent').animate([{transform: 'translateX(-6px)'}, {transform: 'translateX(6px)'}, {transform: 'none'}], {duration: 260}); return; }
+    try{ localStorage.setItem('cliptic.trc', '1'); }catch{} start(+b.dataset.i); });
+  async function start(i){ T.idx = i; T.clip = CLIPS[i]; step(2); $('tmwrap').classList.remove('none');
+    const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = META.url; T.vid = v;
+    await new Promise(r => { v.onloadedmetadata = r; v.onerror = r; setTimeout(r, 6000); });
+    const w = .25, h = Math.min(.5, w*(v.videoWidth/v.videoHeight)*.75 || .2); T.rect = {x: .03, y: Math.max(0, .96 - h), w, h}; $('tmseek').value = 150; seek(); }
+  async function seek(){ const v = T.vid, c = T.clip; if (!v || !c) return; const f = +$('tmseek').value/1000; v.currentTime = (c.s + f*(c.e - c.s))/1000;
+    await new Promise(r => { v.onseeked = r; setTimeout(r, 2500); }); const cv = $('tmc'); cv.width = 640; cv.height = Math.round(640*(v.videoHeight || 9)/(v.videoWidth || 16)); cv.getContext('2d').drawImage(v, 0, 0, cv.width, cv.height); apply(); }
+  const apply = () => { const r = T.rect; if (!r) return; Object.assign($('tmr').style, {left: r.x*100 + '%', top: r.y*100 + '%', width: r.w*100 + '%', height: r.h*100 + '%'}); };
+  let seekT = 0; $('tmseek').addEventListener('input', () => { clearTimeout(seekT); seekT = setTimeout(seek, 90); });
+  { let d = null; const wrap = $('tmwrap'), box = $('tmr'), hd = $('tmh');
+    const begin = (m, e, el) => { e.preventDefault(); e.stopPropagation(); d = {m, sx: e.clientX, sy: e.clientY, r: {...T.rect}}; try{ el.setPointerCapture(e.pointerId); }catch{} };
+    const move = e => { if (!d) return; const dx = (e.clientX - d.sx)/wrap.clientWidth, dy = (e.clientY - d.sy)/wrap.clientHeight, r = T.rect;
+      if (d.m === 'move'){ r.x = clamp(d.r.x + dx, 0, 1 - r.w); r.y = clamp(d.r.y + dy, 0, 1 - r.h); } else { r.w = clamp(d.r.w + dx, .06, 1 - r.x); r.h = clamp(d.r.h + dy, .06, 1 - r.y); } apply(); };
+    const end = () => { d = null; };
+    box.addEventListener('pointerdown', e => { if (e.target !== hd) begin('move', e, box); }); hd.addEventListener('pointerdown', e => begin('size', e, hd));
+    for (const el of [box, hd]){ el.addEventListener('pointermove', move); el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end); } }
+  async function add(has){ const cv = $('tmc'), v = T.vid; if (!v || !T.clip) return; const o = document.createElement('canvas'); o.width = 480; o.height = Math.round(480*cv.height/cv.width); o.getContext('2d').drawImage(cv, 0, 0, o.width, o.height);
+    $('tmyes').disabled = $('tmno').disabled = true; let pm = null; try{ pm = await persistMapAt(v, v.currentTime); }catch{} const blob = await new Promise(r => o.toBlob(r, 'image/jpeg', .82)); const id = 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+    try{ await DB.putBlob('t:' + id, blob); if (pm) await DB.putBlob('d:' + id, new Blob([packD(pm.D)])); }catch{ $('tmyes').disabled = $('tmno').disabled = false; alert('Could not store the example on this device.'); return; }
+    const a = TRL.get(); a.push({id, ts: Date.now(), src: (CP && CP.name) || META.name || 'video', clipS: T.clip.s, clipE: T.clip.e, t: Math.round(v.currentTime*1000), cam: has ? {x: +T.rect.x.toFixed(4), y: +T.rect.y.toFixed(4), w: +T.rect.w.toFixed(4), h: +T.rect.h.toFixed(4)} : null, vw: v.videoWidth, vh: v.videoHeight, dw: pm ? pm.W : 0, dh: pm ? pm.H : 0}); TRL.set(a); paintTr(); $('tmyes').disabled = $('tmno').disabled = false; setTimeout(() => retrainCam(), 50);
+    $('trdone').textContent = has ? 'Webcam example added.' : 'No-webcam example added.'; $('trtotal').textContent = 'You have added ' + a.length + ' example' + (a.length > 1 ? 's' : '') + '. The finder retrains after each example. Try a different moment or a different clip next: variety helps more than repeats.'; step(3); }
+  $('tmyes').onclick = () => add(true); $('tmno').onclick = () => add(false);
+  $('tmback').onclick = () => { step(1); }; $('tmmore').onclick = () => { step(2); $('tmseek').value = Math.round(Math.random()*900 + 50); seek(); }; $('tmfin').onclick = close;
+})();
+(() => {
+  const adm = $('adm'), ADM = {salt: '6bf4b7f88721ad25eaaa8f53', hash: '1e018c4489707552f3264ea0635b55d873b62f23de5c5f846eefd0ee43546cea', it: 200000}; let fails = 0, urls = [];
+  const hx = b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+  async function derive(email, pw){ const enc = new TextEncoder(); const k = await crypto.subtle.importKey('raw', enc.encode(email.trim().toLowerCase() + '\n' + pw), 'PBKDF2', false, ['deriveBits']); return hx(await crypto.subtle.deriveBits({name: 'PBKDF2', salt: enc.encode(ADM.salt), iterations: ADM.it, hash: 'SHA-256'}, k, 256)); }
+  const close = () => { adm.hidden = true; urls.forEach(u => URL.revokeObjectURL(u)); urls = []; $('admpw').value = ''; };
+  $('admx').onclick = close; adm.addEventListener('pointerdown', e => { if (e.target === adm) close(); });
+  $('admbtn').onclick = () => { adm.hidden = false; if (sessionStorage.getItem('cliptic.adm') === '1') return render(); $('admt').textContent = 'Admin sign in'; $('admlogin').hidden = false; $('admbody').hidden = true; $('admerr').hidden = true; };
+  $('admlogin').addEventListener('submit', async e => { e.preventDefault(); const b = $('admgo'); b.disabled = true; $('admerr').hidden = true;
+    try{ if (!(window.crypto && crypto.subtle)) throw new Error('This page needs a secure (https) connection.'); const ok = (await derive($('admem').value, $('admpw').value)) === ADM.hash;
+      if (ok){ fails = 0; try{ sessionStorage.setItem('cliptic.adm', '1'); }catch{} $('admpw').value = ''; render(); }
+      else { fails++; await new Promise(r => setTimeout(r, Math.min(6000, 700*fails))); $('admerr').textContent = 'Wrong email or password.'; $('admerr').hidden = false; } }
+    catch(err){ $('admerr').textContent = err.message || 'Sign in failed.'; $('admerr').hidden = false; } b.disabled = false; });
+  async function render(){ $('admt').textContent = 'Admin'; $('admlogin').hidden = true; const B = $('admbody'); B.hidden = false; B.innerHTML = '<p>Loading…</p>';
+    const ex = TRL.get(), withCam = ex.filter(x => x.cam).length; let est = ''; try{ const e = await navigator.storage.estimate(); est = (e.usage/1048576).toFixed(1) + ' MB used of ' + (e.quota/1073741824).toFixed(1) + ' GB'; }catch{}
+    const P = PROJ.map(p => `<div class="adm-row"><span>${esc(p.name || 'Video')}</span><span>${p.state || ''} · ${(p.clips || []).length} clips · ${(p.saved || []).length} saved</span></div>`).join('') || '<p>No projects.</p>';
+    B.innerHTML = `<div class="adm-g"><div><b>${USE.v}</b><span>videos processed</span></div><div><b>${USE.c}</b><span>clips saved</span></div><div><b>${PROJ.length}</b><span>projects</span></div><div><b>${ex.length}</b><span>training examples (${withCam} webcam, ${ex.length - withCam} none)</span></div></div>
+      <h5>Training examples</h5><div class="adm-ex" id="admex">${ex.length ? '' : '<p>No examples yet.</p>'}</div>
+      <div class="con-r"><button class="btn" id="admexp" type="button">Export JSON</button><button class="btn ghost" id="admclr" type="button">Delete all examples</button></div>
+      <h5>Projects</h5><div class="adm-t">${P}</div>
+      <h5>Device</h5><div class="adm-t"><div class="adm-row"><span>Storage</span><span>${est || 'n/a'}</span></div><div class="adm-row"><span>Browser</span><span>${esc(navigator.userAgent.slice(0, 70))}</span></div><div class="adm-row"><span>Profile</span><span>${esc((PF.name || '-') + ' ' + (PF.handle || ''))}</span></div><div class="adm-row"><span>Account</span><span>${esc(localStorage.getItem('cliptic.acct') || 'none')}</span></div></div>
+      <button class="btn ghost sm" id="admout" type="button">Sign out of admin</button>`;
+    const box = $('admex'); for (const x of ex){ let u = ''; try{ const bl = await DB.getBlob('t:' + x.id); if (bl){ u = URL.createObjectURL(bl); urls.push(u); } }catch{}
+      const f = document.createElement('figure'); f.innerHTML = `<div class="im" style="position:relative"><img alt="" src="${u}">${x.cam ? `<i class="bx" style="left:${x.cam.x*100}%;top:${x.cam.y*100}%;width:${x.cam.w*100}%;height:${x.cam.h*100}%"></i>` : ''}</div><button class="xx" data-id="${x.id}" aria-label="Delete">×</button><figcaption><span>${x.cam ? 'webcam' : 'none'}</span><span>${esc(String(x.src).slice(0, 14))}</span></figcaption>`; box.appendChild(f); }
+    box.onclick = async e => { const b = e.target.closest('.xx'); if (!b) return; const id = b.dataset.id; TRL.set(TRL.get().filter(x => x.id !== id)); try{ await DB.delBlob('t:' + id); await DB.delBlob('d:' + id); }catch{} paintTr(); render(); };
+    $('admexp').onclick = async () => { const out = []; for (const x of ex){ let img = ''; try{ const bl = await DB.getBlob('t:' + x.id); if (bl) img = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(bl); }); }catch{} out.push({...x, image: img}); }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({exported: new Date().toISOString(), model: CAMM.get(), examples: out}, null, 1)], {type: 'application/json'})); a.download = 'cliptic-training-examples.json'; document.body.appendChild(a); a.click(); a.remove(); };
+    $('admclr').onclick = async () => { if (!confirm('Delete all training examples on this device?')) return; for (const x of ex){ try{ await DB.delBlob('t:' + x.id); await DB.delBlob('d:' + x.id); }catch{} } TRL.set([]); CAMM.set(null); paintTr(); paintModel(); render(); };
+    $('admout').onclick = () => { try{ sessionStorage.removeItem('cliptic.adm'); }catch{} close(); };
+  }
+  addEventListener('keydown', e => { if (e.key === 'Escape'){ if (!adm.hidden) close(); if (!$('trn').hidden) $('trx').click(); } });
+})();
 /* ================= announcement, menu drawer, footer, info sheets ================= */
 (() => {
   const INFO = {
-    new: ['What\'s new in Cliptic Beta', `<h5>Beta 19</h5><ul><li>Background music with a volume slider</li><li>Clip speed from 0.8x to 1.5x</li><li>Safe-zone guides in the preview</li></ul><h5>Beta 17</h5><ul><li>Credits chip showing unlimited during the beta</li><li>Scroll animations on the landing page</li></ul><h5>Beta 16</h5><ul><li>Clips as vertical poster cards</li><li>Look filters, brightness, contrast and colour</li><li>Text on video</li></ul><h5>Beta 15</h5><ul><li>Post template and profile badge</li><li>Demo sign-in screen</li></ul><h5>Beta 14</h5><ul><li>Follow-face framing, caption fonts, zoom hook</li><li>Voice enhance and sound effects</li><li>On-device analysis card and desktop layout</li></ul><p>Cliptic is beta software. Things can change or break.</p>`],
+    new: ['What\'s new in Cliptic Beta', `<h5>Beta 20</h5><ul><li>Contribute: mark the webcam in clips; a small on-device webcam finder learns from your examples</li><li>Admin view of data stored on this device</li><li>Options sheet rows no longer cut off</li></ul><h5>Beta 19</h5><ul><li>Background music with a volume slider</li><li>Clip speed from 0.8x to 1.5x</li><li>Safe-zone guides in the preview</li></ul><h5>Beta 17</h5><ul><li>Credits chip showing unlimited during the beta</li><li>Scroll animations on the landing page</li></ul><h5>Beta 16</h5><ul><li>Clips as vertical poster cards</li><li>Look filters, brightness, contrast and colour</li><li>Text on video</li></ul><h5>Beta 15</h5><ul><li>Post template and profile badge</li><li>Demo sign-in screen</li></ul><h5>Beta 14</h5><ul><li>Follow-face framing, caption fonts, zoom hook</li><li>Voice enhance and sound effects</li><li>On-device analysis card and desktop layout</li></ul><p>Cliptic is beta software. Things can change or break.</p>`],
     priv: ['Privacy and data', `<p>Your videos are processed in your browser and are not uploaded to a Cliptic server.</p><h5>What gets downloaded</h5><ul><li>Speech and face-detection models, from public CDNs, the first time you use them</li><li>Caption fonts, from Google Fonts</li></ul><h5>What is stored on your device</h5><ul><li>Your projects and saved clips (browser storage)</li><li>Your profile, settings and usage counts</li></ul><p>There is no real account. The sign-in screen is a demo and sends nothing anywhere.</p>`],
     own: ['Your content', `<p>Use videos you own or have the right to use. Using video you do not own can break copyright law. By continuing you confirm the video is your own original content.</p>`],
     yt: ['YouTube links', `<p>YouTube links are not supported. YouTube does not allow downloading through third-party tools, and a web page cannot do it anyway.</p><p>For your own videos, download them from YouTube Studio and upload the file, or paste a direct link to an MP4 or WebM file that you are allowed to use.</p>`]
@@ -2542,10 +2720,10 @@ $('guides').addEventListener('change', () => { const p = document.querySelector(
     else openInfo(k); };
   const openInfoMsg = () => { $('infot').textContent = 'Install the app'; $('infob').innerHTML = '<p>In Chrome on Android, open the browser menu and choose Install app or Add to Home screen. If the option is missing, the browser has not offered installation for this page yet.</p>'; info.hidden = false; };
   document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
-  const ann = $('ann'); try{ if (localStorage.getItem('cliptic.ann') === 'beta-19') ann.classList.add('gone'); }catch{}
+  const ann = $('ann'); try{ if (localStorage.getItem('cliptic.ann') === 'beta-20') ann.classList.add('gone'); }catch{}
   ann.addEventListener('click', e => { if (e.target.closest('#annx')) return; openInfo('new'); });
   ann.addEventListener('keydown', e => { if (e.key === 'Enter') openInfo('new'); });
-  $('annx').onclick = e => { e.stopPropagation(); ann.classList.add('gone'); try{ localStorage.setItem('cliptic.ann', 'beta-19'); }catch{} };
+  $('annx').onclick = e => { e.stopPropagation(); ann.classList.add('gone'); try{ localStorage.setItem('cliptic.ann', 'beta-20'); }catch{} };
   $('ftgo').onclick = () => { scrollTo({top: 0, behavior: 'smooth'}); setTimeout(() => $('pick').click(), 350); };
 })();
 /* ================= demo sign-in (local only, no real account) ================= */

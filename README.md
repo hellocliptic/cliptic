@@ -119,3 +119,12 @@ Tested in a desktop Chromium at phone size, not on a real phone.
 - Clip speed 0.8x to 1.5x (preview and saved file).
 - Safe-zone guides overlay in the preview (approximate areas covered by app buttons).
 - What's new sheet updated; banner reappears once for Beta 19. Cache cliptic-v21.
+
+## Update 20
+- Settings > Contribute > Train model: pick a clip, mark the webcam box (or "no webcam") on a chosen moment, add as an example. Examples are stored on this device.
+- Admin view (Settings > Admin, sign-in required): stats, example thumbnails with boxes, projects, device info, JSON export, delete. It only shows data on the device it is opened on.
+- Options sheet rows are more compact and no longer cut off. Cache cliptic-v22.
+
+## Update 21
+- The webcam finder now learns from your Contribute examples: a small on-device logistic model scores candidate boxes (edge coverage, corner, size, aspect, position). It starts equal to the built-in rule, retrains after each example, is checked on examples it did not train on (when there are 6 or more), and is only used if it does at least as well as the rule. Toggle, retrain and reset controls are in Settings > Contribute.
+- Cache cliptic-v23.
