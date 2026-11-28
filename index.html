@@ -555,6 +555,12 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
 .ft-cta{display:grid;gap:8px;padding:18px;border-radius:24px;background:linear-gradient(160deg,#26262b,#1b1b1f);border:1px solid #ffffff12;text-align:center}.ft-cta b{font:750 20px var(--font)}.ft-cta span{color:var(--muted);font-size:13.5px}
 .ft-c{margin:0;text-align:center;color:#6f6f79;font-size:13px;padding-top:14px;border-top:1px solid #ffffff10}
 @media (min-width:640px){.ft-cols{grid-template-columns:repeat(3,1fr)}}
+
+/* v19 */
+.musrow{display:flex;align-items:center;gap:10px;margin:2px 0 6px}.mname{flex:1;min-width:0;color:var(--muted);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.phone.gd::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:6;
+ background:linear-gradient(#ff453a38,#ff453a38) top/100% 11% no-repeat,linear-gradient(#ff453a38,#ff453a38) bottom/100% 24% no-repeat,linear-gradient(#ff453a38,#ff453a38) right 0 top 46%/15% 30% no-repeat;
+ box-shadow:inset 0 0 0 1px #ff453a66;border-radius:inherit}
 </style>
 
 <div class="isl" id="isl" data-s="hidden" role="status" aria-live="polite">
@@ -762,6 +768,17 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
         <div class="lbl"><span>Sound effects</span></div>
         <div class="seg" id="seg-sfx"><button data-v="off" aria-pressed="true">Off</button><button data-v="on">On</button></div>
         <select id="sfx" class="hid"><option value="off">off</option><option value="on">on</option></select>
+        <div class="lbl"><span>Music</span></div>
+        <div class="musrow"><button class="btn ghost sm" id="musadd" type="button">Add music</button><span class="mname" id="musname">No track</span><button class="btn ghost sm" id="musrm" type="button" hidden>Remove</button></div>
+        <input id="musfile" type="file" accept="audio/*" hidden>
+        <label class="adj"><span>Volume</span><input type="range" id="musvol" min="0" max="100" value="22"></label>
+        <p class="note">The track loops under the clip and is kept for this session only. Use music you have the rights to.</p>
+        <div class="lbl"><span>Speed</span></div>
+        <div class="seg" id="seg-speed"><button data-v="0.8">0.8x</button><button data-v="1" aria-pressed="true">1x</button><button data-v="1.15">1.15x</button><button data-v="1.3">1.3x</button><button data-v="1.5">1.5x</button></div>
+        <select id="speed" class="hid"><option value="0.8">a</option><option value="1" selected>b</option><option value="1.15">c</option><option value="1.3">d</option><option value="1.5">e</option></select>
+        <div class="lbl"><span>Guides</span></div>
+        <div class="seg" id="seg-guides"><button data-v="off" aria-pressed="true">Off</button><button data-v="on">Safe zones</button></div>
+        <select id="guides" class="hid"><option value="off">o</option><option value="on">n</option></select>
         <p class="note">A low hit on the opening, a whoosh on emphasis moments and a pop on emoji. Generated on your device and mixed into the saved clip.</p>
       </section>
       <section class="panel">
@@ -2033,8 +2050,8 @@ function openClip(i){
   const go = () => { PV.currentTime = c.s/1000; }; if (PV.readyState >= 1) go(); else PV.onloadedmetadata = go;
 }
 function loop(){ if (!playing) return; const c = CLIPS[SEL]; const t = PV.currentTime*1000 - c.s; if (t >= c.e - c.s - 20){ PV.currentTime = c.s/1000; } draw(Math.max(0, t)); if (PAC && $('sfx').value === 'on') sfxTick(PAC, c, Math.max(0, t)); requestAnimationFrame(loop); }
-function startPlay(){ const c = CLIPS[SEL]; if (PV.currentTime*1000 >= c.e - 40 || PV.currentTime*1000 < c.s) PV.currentTime = c.s/1000; PV.muted = false; const _pa = previewAudio(); if (_pa) _pa.ac.resume(); PV.play().then(() => { playing = true; $('play').textContent = 'Pause'; requestAnimationFrame(loop); }).catch(() => {}); }
-function stopPlay(){ playing = false; try{ PV.pause(); }catch{} $('play').textContent = 'Play'; }
+function startPlay(){ const c = CLIPS[SEL]; if (PV.currentTime*1000 >= c.e - 40 || PV.currentTime*1000 < c.s) PV.currentTime = c.s/1000; PV.muted = false; PV.playbackRate = +$('speed').value || 1; const _pa = previewAudio(); if (_pa) _pa.ac.resume(); PV.play().then(() => { musStop(); if (_pa) MUS.cur = musStart(_pa.ac, _pa.bus, (PV.currentTime*1000 - c.s)/1000); playing = true; $('play').textContent = 'Pause'; requestAnimationFrame(loop); }).catch(() => {}); }
+function stopPlay(){ playing = false; musStop(); try{ PV.pause(); }catch{} $('play').textContent = 'Play'; }
 $('play').onclick = () => playing ? stopPlay() : startPlay();
 $('seek').oninput = e => { const c = CLIPS[SEL]; PV.currentTime = (c.s + e.target.value/1000*(c.e - c.s))/1000; };
 $('style').onchange = () => { if (SEL >= 0){ rebuildPages(); draw(); } };
@@ -2196,12 +2213,12 @@ $('save').onclick = async () => {
     const rec = new MediaRecorder(stream, {mimeType: mime, videoBitsPerSecond: 6e6, audioBitsPerSecond: 128e3}); const parts = []; rec.ondataavailable = e => e.data.size && parts.push(e.data);
     const pages = buildPages(clipWords(c), $('style').value);
     v.currentTime = c.s/1000; await new Promise(r => { v.onseeked = r; }); await ac.resume();
-    const done = new Promise(r => rec.onstop = r); rec.start(250); await v.play(); note.textContent = 'Recording in real time. Keep this tab open and in front.';
+    const done = new Promise(r => rec.onstop = r); rec.start(250); v.playbackRate = +$('speed').value || 1; await v.play(); var mx = musStart(ac, gn, 0); note.textContent = 'Recording in real time. Keep this tab open and in front.';
     await new Promise(res => { const step = () => { if (CANCEL_EXPORT || v.currentTime*1000 >= c.e || v.ended){ res(); return; }
       const t = v.currentTime*1000 - c.s; gn.gain.value = clamp(Math.min(t/60, (c.e - v.currentTime*1000)/180));
       renderFrame(g, v, Math.max(0, t), W, H, c, pages); if (sfxOn) sfxTick(xs, c, Math.max(0, t));
       const pct = clamp(t/(c.e - c.s)); pr.firstElementChild.style.width = Math.round(pct*100) + '%'; jobs.update(XJ, {sub: fmt(Math.max(0, t)) + ' of ' + fmt(c.e - c.s), pct}); requestAnimationFrame(step); }; step(); });
-    v.pause(); rec.stop(); await done; ac.close();
+    if (mx) try{ mx.s.stop(); }catch{} v.pause(); rec.stop(); await done; ac.close();
     if (CANCEL_EXPORT){ note.textContent = 'Saving cancelled.'; jobs.end(XJ, 'cancelled', 'Saving cancelled', 'Clip ' + (SEL + 1)); return; }
     const blob = new Blob(parts, {type: mime.split(';')[0]}); const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm'; const url = URL.createObjectURL(blob);
     const slug = ((c.meta && c.meta.title) || 'clip').replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '').slice(0, 40) || 'clip'; const a = document.createElement('a'); a.href = url; a.download = `cliptic-${slug}.${ext}`;
@@ -2429,14 +2446,14 @@ function overlays(g, t, W, H, c, pages, ys, hookAbove){
   fxFade(g, t, W, H, c);
 }
 /* ---- per-clip editor settings, with defaults from the template ---- */
-const UIIDS = ['layout', 'frame', 'style', 'cappos', 'hookt', 'fx', 'mg', 'snap', 'fxp', 'font', 'hookst', 'voice', 'sfx', 'zh', 'filt', 'adjb', 'adjc', 'adjs', 'otxt', 'otpos'];
+const UIIDS = ['layout', 'frame', 'style', 'cappos', 'hookt', 'fx', 'mg', 'snap', 'fxp', 'font', 'hookst', 'voice', 'sfx', 'zh', 'filt', 'adjb', 'adjc', 'adjs', 'otxt', 'otpos', 'speed'];
 ['adjb', 'adjc', 'adjs', 'otxt'].forEach(id => $(id).addEventListener('input', () => { try{ draw(); }catch{} }));
 ['filt', 'otpos'].forEach(id => $(id).addEventListener('change', () => { try{ draw(); }catch{} }));
 $('adjreset').onclick = () => { ['adjb', 'adjc', 'adjs'].forEach(id => { $(id).value = '0'; }); setSel('filt', 'none'); ['adjb', 'filt'].forEach(id => $(id).dispatchEvent(new Event('change'))); try{ draw(); }catch{} };
 $('lpgo').onclick = () => { scrollTo({top: 0, behavior: 'smooth'}); setTimeout(() => $('pick').click(), 350); };
 function setSel(id, v){ const s = $(id); s.value = v; document.querySelectorAll('#seg-' + id + ' button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v))); }
 function tplDefaults(P){
-  const d = {layout: 'fill', frame: 'follow', style: 'POP', cappos: 'low', hookt: 'on', fx: 'on', mg: 'on', snap: 'on', fxp: 'clean', font: '', hookst: 'card', voice: 'off', sfx: 'off', zh: 'on', filt: 'none', adjb: '0', adjc: '0', adjs: '0', otxt: '', otpos: 'mid'};
+  const d = {layout: 'fill', frame: 'follow', style: 'POP', cappos: 'low', hookt: 'on', fx: 'on', mg: 'on', snap: 'on', fxp: 'clean', font: '', hookst: 'card', voice: 'off', sfx: 'off', zh: 'on', filt: 'none', adjb: '0', adjc: '0', adjs: '0', otxt: '', otpos: 'mid', speed: '1'};
   if (P.tpl === 'stream'){ d.layout = P.cam ? 'stream' : 'fill'; d.cappos = 'mid'; d.style = 'HORMOZI'; d.fxp = 'punchy'; d.sfx = 'on'; }
   if (P.tpl === 'captions'){ d.layout = 'blur'; d.hookt = 'off'; d.mg = 'off'; d.fx = 'off'; }
   if (P.tpl === 'auto'){ d.layout = 'blur'; d.style = 'HORMOZI'; d.voice = 'clear'; d.sfx = 'on'; }
@@ -2490,10 +2507,24 @@ paintUse();
   addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(upd); }, {passive: true}); upd();
 })();
 
+
+/* ================= background music, speed, safe-zone guides ================= */
+const MUS = {buf: null, cur: null};
+const musVol = () => $('musvol').value/100*.9;
+function musStart(ac, dest, off){ if (!MUS.buf) return null; try{ const src = ac.createBufferSource(); src.buffer = MUS.buf; src.loop = true; const g = ac.createGain(); g.gain.value = musVol(); src.connect(g); g.connect(dest); src.start(0, Math.max(0, off) % MUS.buf.duration); return {s: src, g}; }catch{ return null; } }
+function musStop(){ if (MUS.cur){ try{ MUS.cur.s.stop(); }catch{} MUS.cur = null; } }
+$('musadd').onclick = () => $('musfile').click();
+$('musfile').onchange = async () => { const f = $('musfile').files[0]; $('musfile').value = ''; if (!f) return;
+  try{ const AC = window.AudioContext || window.webkitAudioContext, ac = new AC(); const buf = await ac.decodeAudioData(await f.arrayBuffer()); ac.close(); MUS.buf = buf; $('musname').textContent = f.name.slice(0, 26) + ' · ' + fmt(buf.duration*1000); $('musrm').hidden = false; }
+  catch{ alert('Could not read that audio file.'); } };
+$('musrm').onclick = () => { musStop(); MUS.buf = null; $('musname').textContent = 'No track'; $('musrm').hidden = true; };
+$('musvol').addEventListener('input', () => { if (MUS.cur) MUS.cur.g.gain.value = musVol(); });
+$('speed').addEventListener('change', () => { if (playing) PV.playbackRate = +$('speed').value || 1; });
+$('guides').addEventListener('change', () => { const p = document.querySelector('.phone'); if (p) p.classList.toggle('gd', $('guides').value === 'on'); });
 /* ================= announcement, menu drawer, footer, info sheets ================= */
 (() => {
   const INFO = {
-    new: ['What\'s new in Cliptic Beta', `<h5>Beta 17</h5><ul><li>Credits chip showing unlimited during the beta</li><li>Scroll animations on the landing page</li></ul><h5>Beta 16</h5><ul><li>Clips as vertical poster cards</li><li>Look filters, brightness, contrast and colour</li><li>Text on video</li></ul><h5>Beta 15</h5><ul><li>Post template and profile badge</li><li>Demo sign-in screen</li></ul><h5>Beta 14</h5><ul><li>Follow-face framing, caption fonts, zoom hook</li><li>Voice enhance and sound effects</li><li>On-device analysis card and desktop layout</li></ul><p>Cliptic is beta software. Things can change or break.</p>`],
+    new: ['What\'s new in Cliptic Beta', `<h5>Beta 19</h5><ul><li>Background music with a volume slider</li><li>Clip speed from 0.8x to 1.5x</li><li>Safe-zone guides in the preview</li></ul><h5>Beta 17</h5><ul><li>Credits chip showing unlimited during the beta</li><li>Scroll animations on the landing page</li></ul><h5>Beta 16</h5><ul><li>Clips as vertical poster cards</li><li>Look filters, brightness, contrast and colour</li><li>Text on video</li></ul><h5>Beta 15</h5><ul><li>Post template and profile badge</li><li>Demo sign-in screen</li></ul><h5>Beta 14</h5><ul><li>Follow-face framing, caption fonts, zoom hook</li><li>Voice enhance and sound effects</li><li>On-device analysis card and desktop layout</li></ul><p>Cliptic is beta software. Things can change or break.</p>`],
     priv: ['Privacy and data', `<p>Your videos are processed in your browser and are not uploaded to a Cliptic server.</p><h5>What gets downloaded</h5><ul><li>Speech and face-detection models, from public CDNs, the first time you use them</li><li>Caption fonts, from Google Fonts</li></ul><h5>What is stored on your device</h5><ul><li>Your projects and saved clips (browser storage)</li><li>Your profile, settings and usage counts</li></ul><p>There is no real account. The sign-in screen is a demo and sends nothing anywhere.</p>`],
     own: ['Your content', `<p>Use videos you own or have the right to use. Using video you do not own can break copyright law. By continuing you confirm the video is your own original content.</p>`],
     yt: ['YouTube links', `<p>YouTube links are not supported. YouTube does not allow downloading through third-party tools, and a web page cannot do it anyway.</p><p>For your own videos, download them from YouTube Studio and upload the file, or paste a direct link to an MP4 or WebM file that you are allowed to use.</p>`]
@@ -2511,10 +2542,10 @@ paintUse();
     else openInfo(k); };
   const openInfoMsg = () => { $('infot').textContent = 'Install the app'; $('infob').innerHTML = '<p>In Chrome on Android, open the browser menu and choose Install app or Add to Home screen. If the option is missing, the browser has not offered installation for this page yet.</p>'; info.hidden = false; };
   document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
-  const ann = $('ann'); try{ if (localStorage.getItem('cliptic.ann') === 'beta-17') ann.classList.add('gone'); }catch{}
+  const ann = $('ann'); try{ if (localStorage.getItem('cliptic.ann') === 'beta-19') ann.classList.add('gone'); }catch{}
   ann.addEventListener('click', e => { if (e.target.closest('#annx')) return; openInfo('new'); });
   ann.addEventListener('keydown', e => { if (e.key === 'Enter') openInfo('new'); });
-  $('annx').onclick = e => { e.stopPropagation(); ann.classList.add('gone'); try{ localStorage.setItem('cliptic.ann', 'beta-17'); }catch{} };
+  $('annx').onclick = e => { e.stopPropagation(); ann.classList.add('gone'); try{ localStorage.setItem('cliptic.ann', 'beta-19'); }catch{} };
   $('ftgo').onclick = () => { scrollTo({top: 0, behavior: 'smooth'}); setTimeout(() => $('pick').click(), 350); };
 })();
 /* ================= demo sign-in (local only, no real account) ================= */

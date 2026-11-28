@@ -113,3 +113,9 @@ Tested in a desktop Chromium at phone size, not on a real phone.
 - Translucent frosted header, smaller transparent logo (menu drawer removed) (white glyph, no black tile).
 - Footer at the bottom of Studio: Product / Learn / Trust columns, badges, unlimited-credits call to action, Privacy / Your content / YouTube info sheets.
 - Service worker cache cliptic-v19. Reload twice after uploading.
+
+## Update 19
+- Background music: add your own audio track, volume slider, loops under the clip, mixed into preview and saved file. Kept for the session only.
+- Clip speed 0.8x to 1.5x (preview and saved file).
+- Safe-zone guides overlay in the preview (approximate areas covered by app buttons).
+- What's new sheet updated; banner reappears once for Beta 19. Cache cliptic-v21.
