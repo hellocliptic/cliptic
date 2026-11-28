@@ -107,3 +107,9 @@ Tested in a desktop Chromium at phone size, not on a real phone.
 - Landing scroll animations: staggered reveals, stat count-up, a step line that fills as you scroll, hero parallax. Skipped when reduced motion is on.
 - Credits: header chip and popover plus a Settings panel showing Unlimited (infinity). Display only; counts videos processed and clips saved on this device.
 - Service worker cache cliptic-v18. Reload twice after uploading.
+
+## Update 18
+- Top announcement banner ("Cliptic Beta is here") opening a What's new sheet; dismissible.
+- Translucent frosted header, smaller transparent logo (menu drawer removed) (white glyph, no black tile).
+- Footer at the bottom of Studio: Product / Learn / Trust columns, badges, unlimited-credits call to action, Privacy / Your content / YouTube info sheets.
+- Service worker cache cliptic-v19. Reload twice after uploading.
