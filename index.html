@@ -450,6 +450,26 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
 }
 @media (min-width:1500px){.editor{grid-template-columns:420px minmax(0,1fr) minmax(0,1fr)}.editor>div:last-child{display:contents}}
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;translate:none;transition:none}.sheet .sh-scroll>*,.ail li,.aitl.go{animation:none}}
+
+/* v15 */
+.prog.big>i{overflow:hidden}
+.pfprev{border-radius:16px;overflow:hidden;border:1px solid #ffffff14;margin:2px 0}.pfprev canvas{display:block;width:100%;height:auto}
+.acct-r{display:flex;align-items:center;gap:14px}.acct-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#3a3a44,#202026);display:grid;place-items:center;font:700 19px var(--font);flex:none;overflow:hidden}
+.acct-t{flex:1;min-width:0;display:grid;gap:2px}.acct-t b{font:650 16px var(--font)}.acct-t span{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth{position:fixed;inset:0;z-index:9000;background:#07070a;display:grid;place-items:center;padding:24px;overflow:hidden;opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
+.auth.in{opacity:1}.auth.out{opacity:0;pointer-events:none}
+.auth .orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;animation:orbf 14s ease-in-out infinite alternate;pointer-events:none}
+.auth .o1{width:340px;height:340px;background:#3b4cc0;left:-80px;top:-60px}.auth .o2{width:300px;height:300px;background:#8a2be2;right:-90px;bottom:10%;animation-delay:-5s}.auth .o3{width:260px;height:260px;background:#0aa5a5;left:20%;bottom:-100px;animation-delay:-9s;opacity:.35}
+@keyframes orbf{to{transform:translate3d(40px,-30px,0) scale(1.15)}}
+.auth-c{position:relative;width:100%;max-width:400px;display:grid;gap:12px;text-align:center;justify-items:stretch;transform:translateY(14px) scale(.98);transition:transform .7s cubic-bezier(.22,1,.36,1)}
+.auth.in .auth-c{transform:none}
+.auth-logo{width:76px;height:76px;margin:0 auto 6px;border-radius:22px;overflow:hidden;background:#111;box-shadow:0 12px 40px #0008}.auth-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.auth h2{font:750 30px/1.1 var(--font);letter-spacing:-.02em;margin:4px 0 0}.auth-s{color:#b4b4bd;font-size:15px;line-height:1.5;margin:0 0 10px}
+.ab{height:54px;border-radius:99px;border:1px solid #ffffff22;background:#ffffff0f;color:#fafafa;font:600 16px var(--font);display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .2s,background .2s}
+.ab:active{transform:scale(.97)}.ab-g{background:#fafafa;color:#09090b;border-color:#fafafa}.ab-ic{display:grid;place-items:center}.ab-sp{display:none;width:18px;height:18px;border-radius:50%;border:2px solid #0003;border-top-color:#09090b;animation:spIn .7s linear infinite}
+.ab.busy .ab-sp{display:block}.ab.busy .ab-ic{display:none}.ab.done .ab-t::before{content:"\2713  "}
+.auth-em{display:grid;gap:10px}.auth-skip{background:none;border:0;color:#9a9aa4;font:500 15px var(--font);padding:10px;cursor:pointer}.auth-n{color:#6f6f79;font-size:12px;line-height:1.5;margin:0}
+@media (prefers-reduced-motion:reduce){.auth .orb{animation:none}.auth,.auth-c{transition:none}}
 </style>
 
 <div class="isl" id="isl" data-s="hidden" role="status" aria-live="polite">
@@ -501,6 +521,19 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
   <div id="library" class="wrap" style="padding:0;gap:12px"></div>
 </main>
 
+<div id="auth" class="auth" hidden aria-modal="true" role="dialog" aria-label="Sign in">
+  <i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i>
+  <div class="auth-c">
+    <div class="auth-logo"><img alt="" id="authlogo"></div>
+    <h2>Welcome to Cliptic</h2>
+    <p class="auth-s">Turn long videos into short clips. Sign in to keep your profile with your projects.</p>
+    <button class="ab ab-g" id="abg" type="button"><span class="ab-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.5-6.5 8-6.5s7 2 8 6.5"/></svg></span><span class="ab-t">Continue with Google</span><i class="ab-sp"></i></button>
+    <button class="ab ab-e" id="abe" type="button">Continue with email</button>
+    <div class="auth-em" id="authem" hidden><input id="authmail" class="txtin" type="email" placeholder="you@example.com" autocomplete="off"><button class="ab ab-g" id="abmail" type="button"><span class="ab-t">Continue</span></button></div>
+    <button class="auth-skip" id="abskip" type="button">Skip for now</button>
+    <p class="auth-n">Demo screen. No real Google or email sign-in happens and nothing leaves your device.</p>
+  </div>
+</div>
 <!-- VIDEO (progress or clips) -->
 <main id="s-proj" class="wrap" hidden style="padding-top:0">
   <button class="back" id="projback">‹ Videos</button>
@@ -622,6 +655,10 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
 <!-- SETTINGS -->
 <main id="s-set" class="wrap" hidden style="padding-top:8px">
   <div><p class="eyebrow">Preferences</p><h1>Settings</h1></div>
+  <section class="panel acct"><div class="lbl"><span>Account</span></div>
+    <div class="acct-r"><div class="acct-av" id="acav">C</div><div class="acct-t"><b id="acname">Guest</b><span id="acsub">Not signed in</span></div><button class="btn ghost sm" id="acbtn" type="button">Sign in</button></div>
+    <p class="note">Demo sign-in only. There is no real account: nothing is sent anywhere.</p>
+  </section>
   <section class="panel">
     <div class="lbl"><span>Face tracking</span></div>
     <div class="seg" id="seg-facet"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
@@ -630,7 +667,14 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
     <div class="lbl"><span>Profile for Post hooks</span></div>
     <div class="pf"><button class="pf-av" id="pfav" type="button" aria-label="Choose photo"><img id="pfimg" alt="" hidden><span id="pfini">Y</span></button><div class="pf-f"><input id="pfname" class="txtin" placeholder="Your name" maxlength="30" autocomplete="off"><input id="pfhandle" class="txtin" placeholder="@yourhandle" maxlength="24" autocomplete="off"></div></div>
     <input id="pffile" type="file" accept="image/*" hidden>
-    <p class="note">Used only for the Post hook style. Stored on this device.</p>
+    <div class="lbl"><span>Badge</span></div>
+    <div class="seg" id="seg-pfbadge"><button data-v="" aria-pressed="true">None</button><button data-v="blue">Blue</button><button data-v="gold">Gold</button><button data-v="grey">Grey</button></div>
+    <select id="pfbadge" class="hid"><option value="">n</option><option value="blue">b</option><option value="gold">g</option><option value="grey">y</option></select>
+    <div class="lbl"><span>Post look</span></div>
+    <div class="seg" id="seg-pfdark"><button data-v="light" aria-pressed="true">Light</button><button data-v="dark">Dark</button></div>
+    <select id="pfdark" class="hid"><option value="light">l</option><option value="dark">d</option></select>
+    <div class="pfprev"><canvas id="pfprev" width="720" height="150"></canvas></div>
+    <p class="note">Used for the Post hook and the Post template. The badge is a cosmetic style you choose for your own graphic; it does not mean any platform has verified you. Stored on this device.</p>
   </section>
   <section class="panel">
     <div class="row">
@@ -688,7 +732,7 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
     <div class="tpl" data-k="stream"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="6" y="8" width="62" height="40" rx="5" fill="#1b1b20"/><rect x="10" y="30" width="20" height="14" rx="3" fill="#2a2a31"/><circle cx="20" cy="36" r="3.4"/><rect x="76" y="6" width="34" height="22" rx="4" fill="#26262c"/><circle cx="93" cy="14" r="4"/><path d="M85 24c2-4 14-4 16 0"/><rect x="76" y="31" width="34" height="32" rx="4" fill="#1b1b20"/><path d="M80 52l8-8 6 6 5-4 8 8"/><path d="M14 58h50" stroke-dasharray="3 4"/></svg></div><div class="tt"><b>Clip gaming and streams</b><span>Finds the best plays and puts your webcam above the gameplay.</span></div><em class="tg">Clipping</em><button class="btn tpl-b" type="button">Use template</button></div>
     <div class="tpl" data-k="long"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="6" y="14" width="64" height="38" rx="5" fill="#1b1b20"/><path d="M34 26l12 7-12 7z" fill="#cfcfd6"/><path d="M12 60h52" stroke="#55555d"/><path d="M26 60h20" stroke="#fafafa" stroke-width="3"/><rect x="82" y="6" width="14" height="26" rx="3" fill="#26262c"/><rect x="100" y="6" width="14" height="26" rx="3" fill="#26262c"/><rect x="82" y="38" width="14" height="26" rx="3" fill="#26262c"/><rect x="100" y="38" width="14" height="26" rx="3" fill="#fafafa" fill-opacity=".14"/></svg></div><div class="tt"><b>Clip long videos</b><span>Finds hooks and complete moments in podcasts, talks and interviews.</span></div><em class="tg">Clipping</em><button class="btn tpl-b" type="button">Use template</button></div>
     <div class="tpl" data-k="auto"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="34" y="4" width="52" height="62" rx="7" fill="#1b1b20"/><circle cx="60" cy="24" r="7"/><path d="M47 44c3-9 23-9 26 0"/><rect x="42" y="48" width="36" height="9" rx="4.5" fill="#fafafa" stroke="none"/><path d="M12 14l4 8 8 4-8 4-4 8-4-8-8-4 8-4z" transform="translate(4 2) scale(.7)"/><path d="M100 40l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" transform="translate(-2 -4) scale(.8)"/></svg></div><div class="tt"><b>Auto-edit talking video</b><span>The whole video with a hook title, captions and motion effects.</span></div><em class="tg">Editing</em><button class="btn tpl-b" type="button">Use template</button></div>
-    <div class="tpl" data-k="captions"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="8" y="8" width="104" height="54" rx="6" fill="#1b1b20"/><rect x="26" y="38" width="68" height="12" rx="6" fill="#fafafa" stroke="none"/><rect x="34" y="42" width="22" height="4" rx="2" fill="#09090b" stroke="none"/><rect x="60" y="42" width="26" height="4" rx="2" fill="#8a8a94" stroke="none"/><circle cx="60" cy="22" r="6"/></svg></div><div class="tt"><b>Captions</b><span>Animated captions on the whole video in one tap.</span></div><em class="tg">Editing</em><button class="btn tpl-b" type="button">Use template</button></div>
+    <div class="tpl" data-k="captions"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="8" y="8" width="104" height="54" rx="6" fill="#1b1b20"/><rect x="26" y="38" width="68" height="12" rx="6" fill="#fafafa" stroke="none"/><rect x="34" y="42" width="22" height="4" rx="2" fill="#09090b" stroke="none"/><rect x="60" y="42" width="26" height="4" rx="2" fill="#8a8a94" stroke="none"/><circle cx="60" cy="22" r="6"/></svg></div><div class="tt"><b>Captions</b><span>Animated captions on the whole video in one tap.</span></div><em class="tg">Editing</em><button class="btn tpl-b" type="button">Use template</button></div><div class="tpl" data-k="post"><div class="art"><svg viewBox="0 0 120 70" width="100%" height="100%" fill="none" stroke="#cfcfd6" stroke-width="1.6" stroke-linejoin="round"><rect x="26" y="4" width="68" height="62" rx="7" fill="#1b1b20"/><rect x="26" y="4" width="68" height="22" rx="7" fill="#fafafa" stroke="none"/><circle cx="37" cy="14" r="5" fill="#8a8a94" stroke="none"/><rect x="46" y="10" width="22" height="3" rx="1.5" fill="#09090b" stroke="none"/><rect x="46" y="16" width="14" height="2.5" rx="1.2" fill="#8a8a94" stroke="none"/><circle cx="72" cy="11.5" r="2.4" fill="#1d9bf0" stroke="none"/><path d="M60 40l10 6-10 6z" fill="#cfcfd6"/></svg></div><div class="tt"><b>Post</b><span>The whole video under a social-post style hook, with your photo, name and badge.</span></div><em class="tg">Editing</em><button class="btn tpl-b" type="button">Use template</button></div>
   </div></div>
       <p class="sh-copy">Using video you don't own may violate copyright laws. By continuing, you confirm this is your own original content.</p>
       <div class="rows">
@@ -865,9 +909,9 @@ $('linkgo').onclick = async () => {
 
 /* ================= templates ================= */
 let TPL = 'long';
-const TPLN = {stream: 'Clip gaming and streams', long: 'Clip long videos', auto: 'Auto-edit talking video', captions: 'Captions'};
-const MODE_T = {stream: 'Streamer (webcam)', long: 'AI clipping', auto: 'Auto-edit', captions: 'Captions'};
-const isWhole = t => t === 'auto' || t === 'captions';
+const TPLN = {stream: 'Clip gaming and streams', long: 'Clip long videos', auto: 'Auto-edit talking video', captions: 'Captions', post: 'Post'};
+const MODE_T = {stream: 'Streamer (webcam)', long: 'AI clipping', auto: 'Auto-edit', captions: 'Captions', post: 'Post'};
+const isWhole = t => t === 'auto' || t === 'captions' || t === 'post';
 const OPT = {range: null, len: 'auto'};
 const LENS = {auto: {t: 'Auto (0m-3m)', p: [15, 45, 180]}, s30: {t: 'Under 30s', p: [10, 20, 30]}, s60: {t: '30s to 60s', p: [30, 45, 60]}, s90: {t: '60s to 90s', p: [60, 75, 90]}, m3: {t: '90s to 3m', p: [90, 120, 180]}};
 function applyLen(){ const [a, b, c] = LENS[OPT.len].p; $('min').value = a; $('tgt').value = b; $('max').value = c; }
@@ -1696,12 +1740,19 @@ function drawCaption(g, page, t, W, H, yc){
   }
 }
 const PF = (() => { try{ return JSON.parse(localStorage.getItem('cliptic.profile')) || {}; }catch{ return {}; } })();
-let PFIMG = null; const setPfImg = src => { if (!src){ PFIMG = null; return; } PFIMG = new Image(); PFIMG.onload = () => { try{ draw(); }catch{} }; PFIMG.src = src; };
+let PFIMG = null; const setPfImg = src => { if (!src){ PFIMG = null; return; } PFIMG = new Image(); PFIMG.onload = () => { try{ draw(); }catch{} try{ pfPrev(); }catch{} }; PFIMG.src = src; };
 const savePF = () => { try{ localStorage.setItem('cliptic.profile', JSON.stringify(PF)); }catch{} };
 function paintPf(){ $('pfname').value = PF.name || ''; $('pfhandle').value = PF.handle || ''; $('pfini').textContent = ((PF.name || 'Y').trim()[0] || 'Y').toUpperCase(); const im = $('pfimg'); im.hidden = !PF.img; if (PF.img) im.src = PF.img; $('pfini').hidden = !!PF.img; }
 paintPf(); setPfImg(PF.img);
 $('pfname').oninput = () => { PF.name = $('pfname').value; savePF(); paintPf(); try{ draw(); }catch{} };
 $('pfhandle').oninput = () => { PF.handle = $('pfhandle').value; savePF(); try{ draw(); }catch{} };
+function pfPrev(){ const c = $('pfprev'); if (!c) return; const g = c.getContext('2d'); g.clearRect(0, 0, c.width, c.height); const h = drawPostCard(g, 'Your hook text shows here', c.width, c.height); c.height = Math.ceil(h); g.clearRect(0, 0, c.width, c.height); drawPostCard(g, 'Your hook text shows here', c.width, c.height); }
+const pfRedraw = () => { try{ draw(); }catch{} pfPrev(); };
+function pfSegs(){ document.querySelectorAll('#seg-pfbadge button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (PF.badge || '')))); document.querySelectorAll('#seg-pfdark button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (PF.dark || 'light')))); }
+document.querySelectorAll('#seg-pfbadge button').forEach(b => b.addEventListener('click', () => { PF.badge = b.dataset.v; savePF(); pfSegs(); pfRedraw(); }));
+document.querySelectorAll('#seg-pfdark button').forEach(b => b.addEventListener('click', () => { PF.dark = b.dataset.v; savePF(); pfSegs(); pfRedraw(); }));
+pfSegs(); setTimeout(pfPrev, 300); document.fonts && document.fonts.ready.then(pfPrev);
+$('pfname').addEventListener('input', pfPrev); $('pfhandle').addEventListener('input', pfPrev);
 $('pfav').onclick = () => $('pffile').click();
 $('pffile').onchange = async () => { const f = $('pffile').files[0]; if (!f) return; try{ const bm = await createImageBitmap(f), c = document.createElement('canvas'); c.width = c.height = 160; const s = Math.min(bm.width, bm.height); c.getContext('2d').drawImage(bm, (bm.width - s)/2, (bm.height - s)/2, s, s, 0, 0, 160, 160); PF.img = c.toDataURL('image/jpeg', .82); savePF(); paintPf(); setPfImg(PF.img); }catch{} };
 function buildVoice(ac, input, out, mode){
@@ -1734,20 +1785,27 @@ function previewAudio(){
   try{ const ac = new AC(), src = ac.createMediaElementSource(PV), bus = ac.createGain(); bus.connect(ac.destination); PAC = {ac, bus, v: buildVoice(ac, src, bus, $('voice').value), sfx: new Sfx(ac, bus)}; }catch{ PAC = null; } return PAC;
 }
 $('voice').addEventListener('change', () => { if (PAC) PAC.v.set($('voice').value); });
-function drawPostCard(g, title, W, H){
+const BADGE = {blue: '#1d9bf0', gold: '#e2b719', grey: '#829aab'};
+function drawBadge(g, x, y, r, col){
+  g.save(); g.fillStyle = col; g.beginPath(); for (let i = 0; i < 16; i++){ const a = i*Math.PI/8, rr = i % 2 ? r*.84 : r; g.lineTo(x + Math.cos(a)*rr, y + Math.sin(a)*rr); } g.closePath(); g.fill();
+  g.strokeStyle = '#fff'; g.lineWidth = r*.2; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); g.moveTo(x - r*.42, y + r*.02); g.lineTo(x - r*.1, y + r*.34); g.lineTo(x + r*.46, y - r*.3); g.stroke(); g.restore();
+}
+function drawPostCard(g, title, W, H, opt){
+  const dk = (opt && opt.dark != null ? opt.dark : PF.dark === 'dark'), bg = dk ? '#000' : '#fff', c1 = dk ? '#e7e9ea' : '#0f1419', c2 = dk ? '#71767b' : '#536471';
   const pad = W*.045, av = W*.125, nameS = W*.05, subS = W*.042, txtS = W*.06, ff = 'Inter, Arial, sans-serif';
   g.save(); g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.font = `400 ${txtS}px ${ff}`;
   const maxW = W - pad*2, lines = []; let cur = ''; for (const w of title.split(' ')){ const tr = cur ? cur + ' ' + w : w; if (cur && g.measureText(tr).width > maxW){ lines.push(cur); cur = w; } else cur = tr; } lines.push(cur);
   const lh = txtS*1.3, head = av + pad*.55, h = pad + head + lines.length*lh + pad*.5;
-  g.fillStyle = '#fff'; g.fillRect(0, 0, W, h);
+  g.fillStyle = bg; g.fillRect(0, 0, W, h);
   const ax = pad, ay = pad, ar = av/2; g.save(); g.beginPath(); g.arc(ax + ar, ay + ar, ar, 0, 7); g.clip();
   if (PFIMG && PFIMG.complete && PFIMG.naturalWidth){ const q = Math.min(PFIMG.naturalWidth, PFIMG.naturalHeight); g.drawImage(PFIMG, (PFIMG.naturalWidth - q)/2, (PFIMG.naturalHeight - q)/2, q, q, ax, ay, av, av); }
-  else { g.fillStyle = '#cfd9de'; g.fillRect(ax, ay, av, av); g.fillStyle = '#536471'; g.font = `700 ${av*.48}px ${ff}`; g.textAlign = 'center'; g.fillText(((PF.name || 'Y').trim()[0] || 'Y').toUpperCase(), ax + ar, ay + ar + av*.17); g.textAlign = 'left'; }
-  g.restore(); const tx = ax + av + pad*.7;
-  g.fillStyle = '#0f1419'; g.font = `700 ${nameS}px ${ff}`; g.fillText(PF.name || 'Your name', tx, ay + ar - nameS*.05);
-  g.fillStyle = '#536471'; g.font = `400 ${subS}px ${ff}`; g.fillText(PF.handle || '@yourhandle', tx, ay + ar + subS*1.12);
-  g.fillStyle = '#0f1419'; g.font = `400 ${txtS}px ${ff}`; lines.forEach((l, i) => g.fillText(l, pad, pad + head + lh*(i + .8)));
-  g.restore();
+  else { g.fillStyle = dk ? '#2f3336' : '#cfd9de'; g.fillRect(ax, ay, av, av); g.fillStyle = c2; g.font = `700 ${av*.48}px ${ff}`; g.textAlign = 'center'; g.fillText(((PF.name || 'Y').trim()[0] || 'Y').toUpperCase(), ax + ar, ay + ar + av*.17); g.textAlign = 'left'; }
+  g.restore(); const tx = ax + av + pad*.7, nm = PF.name || 'Your name', ny = ay + ar - nameS*.05;
+  g.fillStyle = c1; g.font = `700 ${nameS}px ${ff}`; g.fillText(nm, tx, ny);
+  if (BADGE[PF.badge]){ const bw = g.measureText(nm).width; drawBadge(g, tx + bw + nameS*.62, ny - nameS*.3, nameS*.44, BADGE[PF.badge]); }
+  g.fillStyle = c2; g.font = `400 ${subS}px ${ff}`; g.fillText(PF.handle || '@yourhandle', tx, ay + ar + subS*1.12);
+  g.fillStyle = c1; g.font = `400 ${txtS}px ${ff}`; lines.forEach((l, i) => g.fillText(l, pad, pad + head + lh*(i + .8)));
+  g.restore(); return h;
 }
 function drawHookCanvas(g, title, W, H, above){
   if ($('hookst').value === 'post') return drawPostCard(g, title, W, H);
@@ -2228,6 +2286,7 @@ function tplDefaults(P){
   if (P.tpl === 'stream'){ d.layout = P.cam ? 'stream' : 'fill'; d.cappos = 'mid'; d.style = 'HORMOZI'; d.fxp = 'punchy'; d.sfx = 'on'; }
   if (P.tpl === 'captions'){ d.layout = 'blur'; d.hookt = 'off'; d.mg = 'off'; d.fx = 'off'; }
   if (P.tpl === 'auto'){ d.layout = 'blur'; d.style = 'HORMOZI'; d.voice = 'clear'; d.sfx = 'on'; }
+  if (P.tpl === 'post'){ d.layout = 'blur'; d.hookt = 'on'; d.hookst = 'post'; d.voice = 'clear'; d.style = 'POP'; }
   if (P.tpl === 'captions') d.zh = 'off';
   return d;
 }
@@ -2246,6 +2305,23 @@ for (const id of UIIDS) $(id).addEventListener('change', () => { const c = CLIPS
 })();
 
 window.__cliptic = {get A(){return A}, get CLIPS(){return CLIPS}, get PROJ(){return PROJ}, get CAM(){return CAM}, detectCam, show};  // for automated testing only
+
+/* ================= demo sign-in (local only, no real account) ================= */
+(() => {
+  const A = $('auth'); let acct = null; try{ acct = JSON.parse(localStorage.getItem('cliptic.acct')); }catch{}
+  const lg = document.querySelector('#logo img'); if (lg) $('authlogo').src = lg.src;
+  const save = a => { acct = a; try{ if (a) localStorage.setItem('cliptic.acct', JSON.stringify(a)); else localStorage.removeItem('cliptic.acct'); }catch{} paintAcct(); };
+  function paintAcct(){ const n = acct && acct.name; $('acname').textContent = acct && !acct.skip ? (n || 'Signed in') : 'Guest'; $('acsub').textContent = acct ? (acct.skip ? 'Guest' : (acct.email && acct.email !== 'demo account' ? acct.email + ' · ' : '') + 'Demo sign-in') : 'Not signed in'; $('acav').textContent = ((n || 'C').trim()[0] || 'C').toUpperCase(); $('acbtn').textContent = acct && !acct.skip ? 'Sign out' : 'Sign in'; }
+  const open = () => { A.hidden = false; A.classList.remove('out'); requestAnimationFrame(() => requestAnimationFrame(() => A.classList.add('in'))); document.documentElement.classList.add('lock'); };
+  const close = () => { A.classList.remove('in'); A.classList.add('out'); document.documentElement.classList.remove('lock'); setTimeout(() => { A.hidden = true; }, 520); };
+  const finish = a => { if (a.name && !PF.name){ PF.name = a.name; PF.handle = PF.handle || '@' + a.name.toLowerCase().replace(/[^a-z0-9]/g, ''); savePF(); try{ paintPf(); pfPrev(); }catch{} } save(a); close(); };
+  $('abg').onclick = () => { const b = $('abg'); if (b.classList.contains('busy')) return; b.classList.add('busy'); $('abg').querySelector('.ab-t').textContent = 'Signing in'; setTimeout(() => { b.classList.remove('busy'); b.classList.add('done'); $('abg').querySelector('.ab-t').textContent = 'Signed in'; setTimeout(() => { finish({name: 'Demo creator', email: 'demo account'}); b.classList.remove('done'); $('abg').querySelector('.ab-t').textContent = 'Continue with Google'; }, 450); }, 900); };
+  $('abe').onclick = () => { $('authem').hidden = !$('authem').hidden; if (!$('authem').hidden) $('authmail').focus(); };
+  $('abmail').onclick = () => { const m = $('authmail').value.trim(); if (!/.+@.+/.test(m)){ $('authmail').focus(); return; } finish({name: m.split('@')[0], email: m}); };
+  $('abskip').onclick = () => finish({skip: true});
+  $('acbtn').onclick = () => { if (acct && !acct.skip){ save(null); } open(); };
+  paintAcct(); if (!acct) setTimeout(open, 1400);
+})();
 </script>
 
 </body>

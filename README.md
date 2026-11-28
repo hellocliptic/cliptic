@@ -87,3 +87,10 @@ Tested in a desktop Chromium at phone size, not on a real phone.
 - Voice Clear/Studio (EQ, compression, limiter; not noise removal) and generated whoosh/pop/boom sounds.
 - Keyboard shortcuts: Space, left/right arrows in the editor.
 - Service worker cache cliptic-v14. Reload the app twice after uploading.
+
+## Update 15
+- New "Post" template: whole video under a social-post style hook.
+- Settings: profile photo, name, handle, badge (blue/gold/grey, cosmetic), light/dark post, live preview.
+- Demo sign-in screen (local only, no real Google or email login) and an Account section in Settings.
+- Fixed the progress bar shine leaking past the filled part.
+- Service worker cache cliptic-v15. Reload twice after uploading.
