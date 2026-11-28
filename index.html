@@ -453,14 +453,14 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
 
 /* v15 */
 .tab.busy::before,.tab.busy .ic::after{display:none!important}
-.isl-pill{background:rgba(0,0,0,.5)!important;backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border-color:#ffffff22!important;box-shadow:0 8px 30px rgba(0,0,0,.35)!important}
+.isl-pill{background:rgba(14,14,17,.8)!important;backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);border-color:#ffffff33!important;box-shadow:0 10px 36px rgba(0,0,0,.45),inset 0 1px 0 #ffffff1a!important}.isl-txt b{font-size:14.5px!important;color:#fff}.isl-txt span{font-size:12.5px!important;color:#d0d0d8!important}.isl-ring .bg{stroke:#ffffff30!important}.isl-ring{width:26px!important;height:26px!important}
 .isl-logo{background:transparent!important}
 .sh-vid b{-webkit-line-clamp:1!important}
 .prog.big>i{overflow:hidden}
 .pfprev{border-radius:16px;overflow:hidden;border:1px solid #ffffff14;margin:2px 0}.pfprev canvas{display:block;width:100%;height:auto}
 .acct-r{display:flex;align-items:center;gap:14px}.acct-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#3a3a44,#202026);display:grid;place-items:center;font:700 19px var(--font);flex:none;overflow:hidden}
 .acct-t{flex:1;min-width:0;display:grid;gap:2px}.acct-t b{font:650 16px var(--font)}.acct-t span{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.auth{position:fixed;inset:0;z-index:9000;background:radial-gradient(120% 80% at 50% 0%,#202024 0%,#0b0b0e 60%);display:grid;place-items:center;padding:20px;overflow:hidden;opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
+.auth{position:fixed;inset:0;z-index:99999;background:radial-gradient(120% 80% at 50% 0%,#202024 0%,#0b0b0e 60%);display:grid;place-items:center;padding:20px;overflow:hidden;opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
 .auth.in{opacity:1}.auth.out{opacity:0;pointer-events:none}
 .auth .orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;animation:orbf 14s ease-in-out infinite alternate;pointer-events:none}
 .auth .o1{width:380px;height:380px;background:#8b8b96;left:-120px;top:-100px;opacity:.22}.auth .o2{width:320px;height:320px;background:#5c5c66;right:-110px;bottom:8%;animation-delay:-5s;opacity:.25}.auth .o3{display:none}
@@ -827,16 +827,16 @@ const ISL = (() => {
   pill.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; g = {y: e.clientY, moved: false}; clearTimeout(hideT); if (el.dataset.s === 'done'){ bar.classList.remove('cd'); bar.style.setProperty('--cd', '0ms'); bar.style.width = '100%'; } el.classList.add('drag'); try{ pill.setPointerCapture(e.pointerId); }catch{} });
   pill.addEventListener('pointermove', e => { if (!g) return; const dy = e.clientY - g.y; if (Math.abs(dy) > 8) g.moved = true; if (g.moved) el.style.setProperty('--dy', (dy < 0 ? dy*.7 : Math.min(dy*.25, 18)) + 'px'); });
   const end = e => { if (!g) return; const dy = e.clientY - g.y, moved = g.moved; g = null; el.classList.remove('drag'); el.style.removeProperty('--dy'); const s = el.dataset.s;
-    if (moved){ if (dy < -22){ dismissed = true; st('hidden'); buzz(); return; } if (dy > 22 && s === 'compact'){ st('expanded'); buzz(); } if (el.dataset.s === 'done') countdown(5000); else { clearTimeout(expT); expT = setTimeout(() => { if (el.dataset.s !== 'hidden' && !g) st('hidden'); }, 5000); } return; }
+    if (moved){ if (dy < -22){ dismissed = true; st('hidden'); buzz(); return; } if (dy > 22 && s === 'compact'){ st('expanded'); buzz(); } if (el.dataset.s === 'done') countdown(2500); else { clearTimeout(expT); expT = setTimeout(() => { if (el.dataset.s !== 'hidden' && !g) st('hidden'); }, 2500); } return; }
     buzz(); if (s === 'compact') st('expanded'); else if (s === 'expanded') st('compact'); else if (s === 'done'){ openFn && openFn(); st('hidden'); } };
   pill.addEventListener('pointerup', end); pill.addEventListener('pointercancel', end);
   pill.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); const s = el.dataset.s; if (s === 'compact') st('expanded'); else if (s === 'expanded') st('compact'); else if (s === 'done'){ openFn && openFn(); st('hidden'); } } });
   $('isl-cancel').onclick = () => { cancelFn && cancelFn(); };
   $('isl-open').onclick = () => { openFn && openFn(); if (el.dataset.s === 'done') st('hidden'); else st('compact'); };
   return {
-    start(t, s, onCancel, onOpen, quiet){ clearTimeout(hideT); clearTimeout(expT); dismissed = false; cancelFn = onCancel; openFn = onOpen; $('isl-open').textContent = 'View'; paint(t, s, 0); if (quiet){ st('hidden'); return; } st('expanded'); expT = setTimeout(() => { if (el.dataset.s !== 'hidden' && !g) st('hidden'); }, 5000); },
+    start(t, s, onCancel, onOpen, quiet){ clearTimeout(hideT); clearTimeout(expT); dismissed = false; cancelFn = onCancel; openFn = onOpen; $('isl-open').textContent = 'View'; paint(t, s, 0); if (quiet){ st('hidden'); return; } st('expanded'); expT = setTimeout(() => { if (el.dataset.s !== 'hidden' && !g) st('hidden'); }, 2500); },
     update(t, s, p){ paint(t, s, p); if (dismissed) return; const now = Date.now(); if (document.hidden && now - lastN > 4000){ lastN = now; notify(t, s, 'cliptic-progress', true); } },
-    done(t, s, onOpen, label){ clearTimeout(expT); dismissed = false; openFn = onOpen; $('isl-open').textContent = label || 'Open'; $('isl-t').textContent = t; $('isl-s').textContent = s || ''; st('done'); buzz(); countdown(5000); },
+    done(t, s, onOpen, label){ clearTimeout(expT); dismissed = false; openFn = onOpen; $('isl-open').textContent = label || 'Open'; $('isl-t').textContent = t; $('isl-s').textContent = s || ''; st('done'); buzz(); countdown(2500); },
     hide(){ clearTimeout(hideT); clearTimeout(expT); st('hidden'); },
   };
 })();
@@ -2324,7 +2324,7 @@ window.__cliptic = {get A(){return A}, get CLIPS(){return CLIPS}, get PROJ(){ret
   $('abmail').onclick = () => { const m = $('authmail').value.trim(); if (!/.+@.+/.test(m)){ $('authmail').focus(); return; } finish({name: m.split('@')[0], email: m}); };
   $('abskip').onclick = () => finish({skip: true});
   $('acbtn').onclick = () => { if (acct && !acct.skip){ save(null); } open(); };
-  paintAcct(); if (!acct) setTimeout(open, 1400);
+  paintAcct(); if (!acct) setTimeout(open, 350);
 })();
 </script>
 

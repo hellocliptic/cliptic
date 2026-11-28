@@ -95,3 +95,4 @@ Tested in a desktop Chromium at phone size, not on a real phone.
 - Fixed the progress bar shine leaking past the filled part.
 - Service worker cache cliptic-v15. Reload twice after uploading.
 - Update 15b: sign-in restyled to neutral glass (no purple); Clips tab dot removed; notice island is now translucent glass; shorter estimate text ("< 1 min") and one-line file name in the options sheet.
+- Update 15c: sign-in opens on load above everything; island auto-hides after 2.5 s and is higher contrast. Cache cliptic-v16.
