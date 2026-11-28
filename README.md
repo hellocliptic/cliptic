@@ -102,3 +102,8 @@ Tested in a desktop Chromium at phone size, not on a real phone.
 - Clips are now vertical poster cards (preview, score, duration, hover play) in a 2 to 5 column grid.
 - Editor: Look (7 filters + brightness/contrast/colour with reset) and Text on video (top/middle/bottom).
 - Service worker cache cliptic-v17. Reload twice after uploading.
+
+## Update 17
+- Landing scroll animations: staggered reveals, stat count-up, a step line that fills as you scroll, hero parallax. Skipped when reduced motion is on.
+- Credits: header chip and popover plus a Settings panel showing Unlimited (infinity). Display only; counts videos processed and clips saved on this device.
+- Service worker cache cliptic-v18. Reload twice after uploading.
