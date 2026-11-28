@@ -474,6 +474,33 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
 .ab.busy .ab-sp{display:block}.ab.busy .ab-ic{display:none}.ab.done .ab-t::before{content:"\2713  "}
 .auth-em{display:grid;gap:10px}.auth-skip{background:none;border:0;color:#9a9aa4;font:500 15px var(--font);padding:10px;cursor:pointer}.auth-n{color:#6f6f79;font-size:12px;line-height:1.5;margin:0}
 @media (prefers-reduced-motion:reduce){.auth .orb{animation:none}.auth,.auth-c{transition:none}}
+
+/* v16 */
+#clips{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;align-items:start}
+@media (min-width:640px){#clips{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media (min-width:1000px){#clips{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important}}
+@media (min-width:1500px){#clips{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
+#clips>.err,#clips>.panel{grid-column:1/-1}
+.clip{display:flex!important;flex-direction:column!important;padding:0!important;gap:0!important;overflow:hidden;align-items:stretch!important;background:#141418!important;border-radius:22px!important}
+.clip .pvw{width:100%!important;border-radius:0!important;transform:none!important;box-shadow:none!important;border:0!important;aspect-ratio:9/16;justify-self:stretch}
+.clip .pvw img{transition:transform .6s cubic-bezier(.22,1,.36,1)}.clip:hover .pvw img{transform:scale(1.05)}
+.clip .pvw::before{content:"";position:absolute;inset:auto 0 0 0;height:42%;background:linear-gradient(transparent,#000b);z-index:1;pointer-events:none}
+.clip .pvw .rkn{left:8px!important;right:auto!important;top:8px;z-index:2}
+.clip .pvw .sc{right:8px!important;left:auto!important;top:8px;bottom:auto!important;z-index:2}
+.pvw .dur{position:absolute;left:8px;bottom:8px;z-index:2;background:#000b;border:1px solid #ffffff30;border-radius:99px;font:700 12px var(--font);padding:2px 9px}
+.pvw .pl{position:absolute;inset:0;display:grid;place-items:center;z-index:2;opacity:0;transition:opacity .25s}.clip:hover .pl,.clip:focus-visible .pl{opacity:1}
+.pvw .pl i{width:54px;height:54px;border-radius:50%;background:#ffffff26;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:grid;place-items:center;border:1px solid #ffffff40}
+.vc-b{padding:12px 14px 14px;display:grid;gap:6px;min-width:0}.vc-b .ttl{margin:0;font-size:14.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.vc-b .txt{display:none}
+.vc-b .tag{font-size:10.5px;padding:1px 8px}
+.adj{display:grid;grid-template-columns:92px 1fr;align-items:center;gap:10px;font-size:14px;color:var(--soft);margin:4px 0}.adj input{width:100%;accent-color:#fafafa}
+.lp-s{display:grid;gap:14px}.lp-steps{display:grid;gap:10px}.lp-st{display:grid;grid-template-columns:34px 1fr;column-gap:12px;row-gap:2px;align-items:center;padding:12px;border-radius:18px;background:#ffffff08}
+.lp-st em{grid-row:span 2;width:34px;height:34px;border-radius:50%;background:var(--fg);color:var(--ctafg);display:grid;place-items:center;font:700 15px var(--font);font-style:normal}.lp-st b{font-size:15.5px}.lp-st span{color:var(--muted);font-size:13.5px}
+.lp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.lp-f{display:grid;gap:6px;padding:14px;border-radius:18px;background:#ffffff08;transition:background .25s,transform .25s}.lp-f:hover{background:#ffffff10;transform:translateY(-3px)}
+.lp-f b{font-size:14.5px}.lp-f>span:last-child{color:var(--muted);font-size:12.5px;line-height:1.4}.lp-i{width:38px;height:38px;border-radius:12px;background:#ffffff12;display:grid;place-items:center}
+.lp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}.lp-stats b{display:block;font:750 30px/1.1 var(--font);letter-spacing:-.02em}.lp-stats span{color:var(--muted);font-size:12px}
+.lp-q{border-top:1px solid #ffffff10;padding:2px 0}.lp-q summary{cursor:pointer;list-style:none;padding:13px 0;font:600 15px var(--font);display:flex;justify-content:space-between;gap:12px}.lp-q summary::-webkit-details-marker{display:none}.lp-q summary::after{content:"+";color:var(--muted);transition:transform .3s}.lp-q[open] summary::after{transform:rotate(45deg)}
+.lp-q p{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.55;animation:rise .35s both}
+@media (min-width:640px){.lp-steps{grid-template-columns:repeat(3,1fr)}.lp-st{grid-template-columns:1fr;row-gap:6px}.lp-st em{grid-row:auto}.lp-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 
 <div class="isl" id="isl" data-s="hidden" role="status" aria-live="polite">
@@ -516,6 +543,19 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
   <div class="two"><button class="cta" id="go">Get clips</button><button class="cta ol" id="goauto">Auto-edit</button></div>
   <button class="cta ol" id="install" hidden type="button">Install Cliptic as an app</button>
   <p class="note">YouTube links are not supported: YouTube does not allow downloading through third-party tools and a web page cannot do it. For your own videos, download them from YouTube Studio and upload the file. Direct links to files you own (MP4 or WebM) work if the host allows it.</p>
+  <section class="panel lp-s" id="lp-how"><div class="lbl"><span>How it works</span></div>
+    <div class="lp-steps"><div class="lp-st"><em>1</em><b>Add a video</b><span>Upload a file or paste a link to your own video file.</span></div><div class="lp-st"><em>2</em><b>AI finds the moments</b><span>It listens, looks for faces and scene cuts, and ranks the best stretches.</span></div><div class="lp-st"><em>3</em><b>Edit and save</b><span>Pick captions, font, look and sound, then save a vertical clip.</span></div></div>
+    <button class="cta" id="lpgo" type="button">Start with a video</button></section>
+  <section class="panel lp-s"><div class="lbl"><span>Inside the editor</span></div><div class="lp-grid"><div class="lp-f"><span class="lp-i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 12h4M13 12h4M7 15h7"/></svg></span><b>Animated captions</b><span>17 styles, word-by-word highlight, emoji and 14 fonts.</span></div><div class="lp-f"><span class="lp-i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="4"/><path d="M5 20c1.2-4 4-5.5 7-5.5s5.8 1.5 7 5.5"/></svg></span><b>Follow the face</b><span>Keeps the speaker framed and zooms in on them.</span></div><div class="lp-f"><span class="lp-i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.2-4.2M11 8.5v5M8.5 11h5"/></svg></span><b>Zoom hook</b><span>A snap zoom on the first second to stop the scroll.</span></div><div class="lp-f"><span class="lp-i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4"/></svg></span><b>Voice enhance</b><span>Clear and Studio modes: EQ, compression, limiter.</span></div><div class="lp-f"><span class="lp-i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L5 14h6l-1 8 8-12h-6z"/></svg></span><b>Sound effects</b><span>Hit, whoosh and pop on the right moments.</span></div><div class="lp-f"><span class="lp-i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><b>Looks and adjust</b><span>Filters plus brightness, contrast and colour.</span></div><div class="lp-f"><span class="lp-i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M13 8h4M13 11h3M7 15h10"/></svg></span><b>Post hook</b><span>Your photo, name and badge as a social-post title.</span></div><div class="lp-f"><span class="lp-i"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14M12 6v13M9 19h6"/></svg></span><b>Text on video</b><span>Add your own text over any clip.</span></div></div></section>
+  <section class="panel lp-s"><div class="lp-stats"><div><b>17</b><span>caption styles</span></div><div><b>14</b><span>fonts</span></div><div><b>7</b><span>looks</span></div><div><b>3</b><span>voice modes</span></div></div></section>
+  <section class="panel lp-s"><div class="lbl"><span>Made for</span></div><div class="chips"><span class="tag">Podcasts</span><span class="tag">Interviews</span><span class="tag">Gaming</span><span class="tag">Talks</span><span class="tag">Vlogs</span><span class="tag">Tutorials</span></div></section>
+  <section class="panel lp-s"><div class="lbl"><span>Questions</span></div>
+    <details class="lp-q"><summary>Is my video uploaded anywhere?</summary><p>No. Your video is processed in your browser. Only the speech and detection models are downloaded.</p></details>
+    <details class="lp-q"><summary>Can I paste a YouTube link?</summary><p>No. YouTube does not allow downloading through third-party tools. Download your own videos from YouTube Studio, or paste a direct link to a video file.</p></details>
+    <details class="lp-q"><summary>How long does it take?</summary><p>It depends on your device and the video length. Saving a clip runs in real time, so a 30 second clip takes about 30 seconds.</p></details>
+    <details class="lp-q"><summary>Is it real AI?</summary><p>Speech recognition and face detection use models that run on your device. Clip ranking, the analysis card and voice enhance are rule-based processing, not generative AI.</p></details>
+    <details class="lp-q"><summary>Which browsers work?</summary><p>Chrome on Android and desktop is what it is built and tested for. Looks (filters) need a browser that supports canvas filters.</p></details>
+  </section>
 </main>
 
 <!-- LIBRARY -->
@@ -623,6 +663,20 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
         <div class="seg" id="seg-zh"><button data-v="on" aria-pressed="true">On</button><button data-v="off">Off</button></div>
         <select id="zh" class="hid"><option value="on">on</option><option value="off">off</option></select>
         <p class="note">Punchy adds camera shake and a flash on emphasis moments. Cinematic adds a slow push-in, vignette, film grain and fades.</p>
+      </section>
+      <section class="panel">
+        <div class="lbl"><span>Look</span></div>
+        <div class="seg fontrow" id="seg-filt"><button data-v="none" aria-pressed="true">None</button><button data-v="vivid">Vivid</button><button data-v="warm">Warm</button><button data-v="cool">Cool</button><button data-v="bw">B&amp;W</button><button data-v="fade">Fade</button><button data-v="cine">Cine</button></div>
+        <select id="filt" class="hid"><option value="none">n</option><option value="vivid">v</option><option value="warm">w</option><option value="cool">c</option><option value="bw">b</option><option value="fade">f</option><option value="cine">ci</option></select>
+        <label class="adj"><span>Brightness</span><input type="range" id="adjb" min="-40" max="40" value="0"></label>
+        <label class="adj"><span>Contrast</span><input type="range" id="adjc" min="-40" max="40" value="0"></label>
+        <label class="adj"><span>Colour</span><input type="range" id="adjs" min="-60" max="60" value="0"></label>
+        <button class="btn ghost sm" id="adjreset" type="button">Reset look</button>
+        <p class="note">Filters apply to the video picture in the preview and the saved clip. They need a browser that supports canvas filters (Chrome does).</p>
+        <div class="lbl"><span>Text on video</span></div>
+        <input id="otxt" class="txtin" maxlength="60" placeholder="Type text to show on the clip" autocomplete="off">
+        <div class="seg" id="seg-otpos"><button data-v="top">Top</button><button data-v="mid" aria-pressed="true">Middle</button><button data-v="low">Bottom</button></div>
+        <select id="otpos" class="hid"><option value="top">t</option><option value="mid">m</option><option value="low">l</option></select>
       </section>
       <section class="panel">
         <div class="lbl"><span>Voice</span></div>
@@ -1503,7 +1557,7 @@ function renderClips(){
   countTo($('sc-n'), CLIPS.length, 600); if (CLIPS.length) countTo($('sc-top'), Math.round(CLIPS[0].score), 900); else $('sc-top').textContent = '—'; countTo($('sc-words'), CAPWORDS.length, 1100); try{ renderAnalysis(P); }catch(e){ $('aicard').hidden = true; }
   if (!CLIPS.length){ $('clips').innerHTML = warn + '<div class="panel">No clip fits these limits. Lower the minimum length in Settings and press Re-rank.</div>'; return; }
   const endTag = c => c.endKind === 'sentence' ? '<span class="tag g">Ends on a full sentence</span>' : c.endKind === 'pause' ? '<span class="tag g">Ends on a natural pause</span>' : '<span class="tag">Ending not verified</span>';
-  $('clips').innerHTML = warn + CLIPS.map((c,i) => `<button class="clip" data-i="${i}" style="--i:${Math.min(i, 8)}"><div class="pvw ${c.pv ? '' : 'ld'}">${c.pv ? `<img alt="" src="${c.pv}">` : ''}<span class="rkn">#${i+1}</span><span class="sc">${Math.round(c.score)}</span></div><div style="min-width:0">
+  $('clips').innerHTML = warn + CLIPS.map((c,i) => `<button class="clip" data-i="${i}" style="--i:${Math.min(i, 8)}"><div class="pvw ${c.pv ? '' : 'ld'}">${c.pv ? `<img alt="" src="${c.pv}">` : ''}<span class="rkn">#${i+1}</span><span class="sc">${Math.round(c.score)}</span><span class="dur">${fmt(c.e - c.s)}</span><span class="pl"><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M8 5.5v13l11-6.5z"/></svg></i></span></div><div class="vc-b">
     <div class="tc">${fmt(c.s)}–${fmt(c.e)} · ${Math.round((c.e-c.s)/1000)}s</div>
     <p class="ttl">${esc(c.meta ? c.meta.title : clipMeta(c,i).title)}</p>
     ${c.hasText && !c.whole ? `<p class="txt">${esc(c.span.map(s=>s.text).join(' ').slice(0,110))}${c.span.map(s=>s.text).join(' ').length > 110 ? '…' : ''}</p>` : ''}
@@ -1836,6 +1890,15 @@ function renderFrame(g, v, t, W, H, c, pages){
   const k = fxp() === 'punchy' ? shakeAt(c, t) : null; if (!k) return renderFrame0(g, v, t, W, H, c, pages);
   g.save(); g.translate(W/2 + k.x*W*.014, H/2 + k.y*H*.008); g.scale(1.04, 1.04); g.translate(-W/2, -H/2); renderFrame0(g, v, t, W, H, c, pages); g.restore();
 }
+const FILTS = {none: '', vivid: 'saturate(1.35) contrast(1.08)', warm: 'sepia(.25) saturate(1.2) hue-rotate(-8deg)', cool: 'saturate(1.1) hue-rotate(12deg) brightness(1.02)', bw: 'grayscale(1) contrast(1.1)', fade: 'contrast(.9) brightness(1.08) saturate(.85)', cine: 'contrast(1.15) saturate(.9) sepia(.12) brightness(.95)'};
+function fltStr(){ const b = +$('adjb').value || 0, c = +$('adjc').value || 0, sa = +$('adjs').value || 0, f = FILTS[$('filt').value] || ''; return (f + (b || c || sa ? ` brightness(${(1 + b/100).toFixed(2)}) contrast(${(1 + c/100).toFixed(2)}) saturate(${(1 + sa/100).toFixed(2)})` : '')).trim(); }
+function drawOText(g, t, W, H){
+  const tx = ($('otxt').value || '').trim(); if (!tx) return; const pos = $('otpos').value, a = clamp(t/350), size = W*.07, ff = '800 ' + size + 'px ' + ($('font').value ? `"${$('font').value}", ` : '') + 'Inter, Arial, sans-serif';
+  g.save(); g.globalAlpha = a; g.font = ff; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; const maxW = W*.84, lines = []; let cur = '';
+  for (const w of tx.split(' ')){ const tr = cur ? cur + ' ' + w : w; if (cur && g.measureText(tr).width > maxW){ lines.push(cur); cur = w; } else cur = tr; } lines.push(cur);
+  const lh = size*1.18, y0 = (pos === 'top' ? H*.2 : pos === 'low' ? H*.84 : H*.5) - (lines.length - 1)*lh/2 + (1 - a)*size*.4;
+  lines.forEach((l, i) => { const y = y0 + i*lh; g.lineWidth = size*.2; g.strokeStyle = 'rgba(0,0,0,.85)'; g.strokeText(l, W/2, y); g.fillStyle = '#fff'; g.fillText(l, W/2, y); }); g.restore();
+}
 function renderFrame0(g, v, t, W, H, c, pages){
   const vw = v.videoWidth, vh = v.videoHeight; if (!vw) return; const len = c.e - c.s, lay = $('layout').value, z = (fxOn() ? zoomAt(t, len) : 1)*(mgOn() ? punchAt(c, t) : 1)*(fxp() === 'cine' ? 1 + .06*Math.min(1, t/len) : 1)*($('zh').value === 'on' && t < 1000 ? 1 + .22*Math.pow(1 - Math.max(0, t)/1000, 3) : 1);
   if (lay === 'stream' && CAMR) return drawStream(g, v, t, W, H, c, pages, z);
@@ -1844,16 +1907,17 @@ function renderFrame0(g, v, t, W, H, c, pages){
   if (!fit){
     const cropW = Math.min(vw, vh*9/16), cropH = cropW < vw ? vh : vw*16/9, cx = framingX(c.s + t)*vw;
     const FA = hasFace() ? faceAt(c.s + t) : null, zf = FA ? clamp(.3/Math.max(.08, FA[2]), 1, 1.9) : 1, cw2 = cropW/(z*zf), ch2 = Math.min(cropH, vh)/(z*zf), sx = clamp(cx - cw2/2, 0, vw - cw2), sy = FA ? clamp(FA[1]*vh - ch2*.38, 0, vh - ch2) : clamp((vh - ch2)/2, 0, vh - ch2);
-    g.drawImage(v, sx, sy, cw2, ch2, 0, 0, W, H);
+    const fs = fltStr(); if (fs) g.filter = fs; g.drawImage(v, sx, sy, cw2, ch2, 0, 0, W, H); if (fs) g.filter = 'none';
   } else {
     vTop = (H - dh)/2; vBot = vTop + dh;
     if (lay === 'blur'){
       const cr = Math.min(vw, vh*9/16), ch = cr < vw ? vh : vw*16/9; BGg.drawImage(v, (vw-cr)/2, (vh-ch)/2, cr, ch, 0, 0, 36, 64);
       BG2g.imageSmoothingQuality = 'high'; BG2g.drawImage(BG, 0, 0, 135, 240); g.drawImage(BG2, 0, 0, W, H); g.fillStyle = 'rgba(0,0,0,.4)'; g.fillRect(0, 0, W, H);
     }
-    g.save(); g.beginPath(); g.rect(0, vTop, dw, dh); g.clip(); const sw = vw/z, sh = vh/z; g.drawImage(v, (vw-sw)/2, (vh-sh)/2, sw, sh, 0, vTop, dw, dh); g.restore();
+    g.save(); g.beginPath(); g.rect(0, vTop, dw, dh); g.clip(); const sw = vw/z, sh = vh/z; { const fs = fltStr(); if (fs) g.filter = fs; } g.drawImage(v, (vw-sw)/2, (vh-sh)/2, sw, sh, 0, vTop, dw, dh); g.restore();
   }
   overlays(g, t, W, H, c, pages, {up: fit ? vTop + dh*.14 : H*.3, mid: H*.5, low: (fit && H - vBot > H*.16) ? vBot + (H - vBot)*.45 : H*.72}, fit ? vTop : null);
+  drawOText(g, t, W, H);
 }
 
 /* ---- preview ---- */
@@ -2283,10 +2347,14 @@ function overlays(g, t, W, H, c, pages, ys, hookAbove){
   fxFade(g, t, W, H, c);
 }
 /* ---- per-clip editor settings, with defaults from the template ---- */
-const UIIDS = ['layout', 'frame', 'style', 'cappos', 'hookt', 'fx', 'mg', 'snap', 'fxp', 'font', 'hookst', 'voice', 'sfx', 'zh'];
+const UIIDS = ['layout', 'frame', 'style', 'cappos', 'hookt', 'fx', 'mg', 'snap', 'fxp', 'font', 'hookst', 'voice', 'sfx', 'zh', 'filt', 'adjb', 'adjc', 'adjs', 'otxt', 'otpos'];
+['adjb', 'adjc', 'adjs', 'otxt'].forEach(id => $(id).addEventListener('input', () => { try{ draw(); }catch{} }));
+['filt', 'otpos'].forEach(id => $(id).addEventListener('change', () => { try{ draw(); }catch{} }));
+$('adjreset').onclick = () => { ['adjb', 'adjc', 'adjs'].forEach(id => { $(id).value = '0'; }); setSel('filt', 'none'); ['adjb', 'filt'].forEach(id => $(id).dispatchEvent(new Event('change'))); try{ draw(); }catch{} };
+$('lpgo').onclick = () => { scrollTo({top: 0, behavior: 'smooth'}); setTimeout(() => $('pick').click(), 350); };
 function setSel(id, v){ const s = $(id); s.value = v; document.querySelectorAll('#seg-' + id + ' button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v))); }
 function tplDefaults(P){
-  const d = {layout: 'fill', frame: 'follow', style: 'POP', cappos: 'low', hookt: 'on', fx: 'on', mg: 'on', snap: 'on', fxp: 'clean', font: '', hookst: 'card', voice: 'off', sfx: 'off', zh: 'on'};
+  const d = {layout: 'fill', frame: 'follow', style: 'POP', cappos: 'low', hookt: 'on', fx: 'on', mg: 'on', snap: 'on', fxp: 'clean', font: '', hookst: 'card', voice: 'off', sfx: 'off', zh: 'on', filt: 'none', adjb: '0', adjc: '0', adjs: '0', otxt: '', otpos: 'mid'};
   if (P.tpl === 'stream'){ d.layout = P.cam ? 'stream' : 'fill'; d.cappos = 'mid'; d.style = 'HORMOZI'; d.fxp = 'punchy'; d.sfx = 'on'; }
   if (P.tpl === 'captions'){ d.layout = 'blur'; d.hookt = 'off'; d.mg = 'off'; d.fx = 'off'; }
   if (P.tpl === 'auto'){ d.layout = 'blur'; d.style = 'HORMOZI'; d.voice = 'clear'; d.sfx = 'on'; }

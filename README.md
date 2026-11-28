@@ -96,3 +96,9 @@ Tested in a desktop Chromium at phone size, not on a real phone.
 - Service worker cache cliptic-v15. Reload twice after uploading.
 - Update 15b: sign-in restyled to neutral glass (no purple); Clips tab dot removed; notice island is now translucent glass; shorter estimate text ("< 1 min") and one-line file name in the options sheet.
 - Update 15c: sign-in opens on load above everything; island auto-hides after 2.5 s and is higher contrast. Cache cliptic-v16.
+
+## Update 16
+- Landing sections under Upload: how it works, feature grid, stats, FAQ.
+- Clips are now vertical poster cards (preview, score, duration, hover play) in a 2 to 5 column grid.
+- Editor: Look (7 filters + brightness/contrast/colour with reset) and Text on video (top/middle/bottom).
+- Service worker cache cliptic-v17. Reload twice after uploading.
