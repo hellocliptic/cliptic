@@ -94,3 +94,4 @@ Tested in a desktop Chromium at phone size, not on a real phone.
 - Demo sign-in screen (local only, no real Google or email login) and an Account section in Settings.
 - Fixed the progress bar shine leaking past the filled part.
 - Service worker cache cliptic-v15. Reload twice after uploading.
+- Update 15b: sign-in restyled to neutral glass (no purple); Clips tab dot removed; notice island is now translucent glass; shorter estimate text ("< 1 min") and one-line file name in the options sheet.

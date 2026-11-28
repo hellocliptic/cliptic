@@ -452,20 +452,24 @@ html{scroll-behavior:smooth}button,.tab,.tpl,.lib-main,.clip{cursor:pointer;-web
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;translate:none;transition:none}.sheet .sh-scroll>*,.ail li,.aitl.go{animation:none}}
 
 /* v15 */
+.tab.busy::before,.tab.busy .ic::after{display:none!important}
+.isl-pill{background:rgba(0,0,0,.5)!important;backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border-color:#ffffff22!important;box-shadow:0 8px 30px rgba(0,0,0,.35)!important}
+.isl-logo{background:transparent!important}
+.sh-vid b{-webkit-line-clamp:1!important}
 .prog.big>i{overflow:hidden}
 .pfprev{border-radius:16px;overflow:hidden;border:1px solid #ffffff14;margin:2px 0}.pfprev canvas{display:block;width:100%;height:auto}
 .acct-r{display:flex;align-items:center;gap:14px}.acct-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#3a3a44,#202026);display:grid;place-items:center;font:700 19px var(--font);flex:none;overflow:hidden}
 .acct-t{flex:1;min-width:0;display:grid;gap:2px}.acct-t b{font:650 16px var(--font)}.acct-t span{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.auth{position:fixed;inset:0;z-index:9000;background:#07070a;display:grid;place-items:center;padding:24px;overflow:hidden;opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
+.auth{position:fixed;inset:0;z-index:9000;background:radial-gradient(120% 80% at 50% 0%,#202024 0%,#0b0b0e 60%);display:grid;place-items:center;padding:20px;overflow:hidden;opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1)}
 .auth.in{opacity:1}.auth.out{opacity:0;pointer-events:none}
 .auth .orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;animation:orbf 14s ease-in-out infinite alternate;pointer-events:none}
-.auth .o1{width:340px;height:340px;background:#3b4cc0;left:-80px;top:-60px}.auth .o2{width:300px;height:300px;background:#8a2be2;right:-90px;bottom:10%;animation-delay:-5s}.auth .o3{width:260px;height:260px;background:#0aa5a5;left:20%;bottom:-100px;animation-delay:-9s;opacity:.35}
+.auth .o1{width:380px;height:380px;background:#8b8b96;left:-120px;top:-100px;opacity:.22}.auth .o2{width:320px;height:320px;background:#5c5c66;right:-110px;bottom:8%;animation-delay:-5s;opacity:.25}.auth .o3{display:none}
 @keyframes orbf{to{transform:translate3d(40px,-30px,0) scale(1.15)}}
-.auth-c{position:relative;width:100%;max-width:400px;display:grid;gap:12px;text-align:center;justify-items:stretch;transform:translateY(14px) scale(.98);transition:transform .7s cubic-bezier(.22,1,.36,1)}
+.auth-c{position:relative;width:100%;max-width:420px;display:grid;gap:12px;text-align:center;justify-items:stretch;padding:30px 22px 22px;border-radius:34px;background:linear-gradient(160deg,#2a2a2fcc,#17171bcc);border:1px solid #ffffff14;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 30px 80px #000a;transform:translateY(14px) scale(.98);transition:transform .7s cubic-bezier(.22,1,.36,1)}
 .auth.in .auth-c{transform:none}
 .auth-logo{width:76px;height:76px;margin:0 auto 6px;border-radius:22px;overflow:hidden;background:#111;box-shadow:0 12px 40px #0008}.auth-logo img{width:100%;height:100%;object-fit:cover;display:block}
 .auth h2{font:750 30px/1.1 var(--font);letter-spacing:-.02em;margin:4px 0 0}.auth-s{color:#b4b4bd;font-size:15px;line-height:1.5;margin:0 0 10px}
-.ab{height:54px;border-radius:99px;border:1px solid #ffffff22;background:#ffffff0f;color:#fafafa;font:600 16px var(--font);display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .2s,background .2s}
+.ab{height:54px;border-radius:99px;border:1px solid #ffffff1a;background:#34343a;color:#fafafa;font:600 16px var(--font);display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .2s,background .2s}
 .ab:active{transform:scale(.97)}.ab-g{background:#fafafa;color:#09090b;border-color:#fafafa}.ab-ic{display:grid;place-items:center}.ab-sp{display:none;width:18px;height:18px;border-radius:50%;border:2px solid #0003;border-top-color:#09090b;animation:spIn .7s linear infinite}
 .ab.busy .ab-sp{display:block}.ab.busy .ab-ic{display:none}.ab.done .ab-t::before{content:"\2713  "}
 .auth-em{display:grid;gap:10px}.auth-skip{background:none;border:0;color:#9a9aa4;font:500 15px var(--font);padding:10px;cursor:pointer}.auth-n{color:#6f6f79;font-size:12px;line-height:1.5;margin:0}
@@ -930,7 +934,7 @@ const parseT = s => { s = String(s).trim(); if (!s) return null; const p = s.spl
 function estimate(){
   const PD = PENDING; if (!PD) return '—'; let rt = 0; try{ rt = +localStorage.getItem('cliptic.rt') || 0; }catch{}
   const guess = !rt; if (guess) rt = $('mode').value === 'fast' ? .5 : .9; const sec = (OPT.range ? OPT.range[1] - OPT.range[0] : PD.meta.dur)/1000*rt, m = sec/60;
-  return (m < 1 ? 'Under a minute' : '~' + Math.round(m) + ' min') + (guess ? ' (rough guess)' : ' (from your last run)');
+  return m < 1 ? '< 1 min' : '~' + Math.round(m) + ' min';
 }
 function syncSheet(){
   const PD = PENDING; if (!PD) return;
