@@ -68,3 +68,22 @@ Tested in a desktop Chromium at phone size only, not on a real phone. Re-upload 
 - The CPU/GPU pill follows the Settings choice (icon and label), and changing it makes the speech model reload with that device. After a model loads, the pill shows the device actually used.
 - The page behind the options sheet and menus no longer scrolls while they are open.
 Tested in a desktop Chromium at phone size, not on a real phone.
+
+## Update 13
+- Logo: your new logo, static (no splash, no glow). Icons in `icons/` were replaced in update 11; re-upload the folder if you have not.
+- Processing screen: big percentage that rolls digit by digit, a time estimate ("About 2 minutes left", shown after a few seconds of progress), a smooth progress bar, and a stage list with spinner and animated check marks. The Library numbers (clips, top score, words) count up.
+- 9 new subtitle styles (17 total): Neon, Sunset, Comic, Typewriter, Wave, Outline, Blue box, Retro, Reveal. The picker scrolls sideways.
+- New "Visual FX" control in the editor: Clean, Punchy (camera shake and flash on emphasis moments) and Cinematic (slow push-in, vignette, film grain, fades). Stream clips default to Punchy. Saved clips use the same renderer.
+- Speed: the speech model starts loading as soon as the options sheet opens (while you choose options) instead of after you press the button; screen transitions are shorter. Saving a clip still runs in real time (a 30 s clip takes about 30 s).
+Tested in a desktop Chromium at phone size, not on a real phone.
+
+## Update 14
+- Desktop and tablet layouts (left rail on wide screens, 2-column clips and editor).
+- Smooth reveal-on-scroll and hover animations; reduced-motion respected.
+- On-device analysis card (loudness timeline, pace, scene cuts, face visibility, insights). Rule-based, not a cloud AI.
+- Follow-face framing using MediaPipe (loads about 10 MB once from a CDN).
+- Many caption fonts (Google Fonts, need internet the first time).
+- Zoom hook, Post-style hook card (name, handle and photo set in Settings).
+- Voice Clear/Studio (EQ, compression, limiter; not noise removal) and generated whoosh/pop/boom sounds.
+- Keyboard shortcuts: Space, left/right arrows in the editor.
+- Service worker cache cliptic-v14. Reload the app twice after uploading.

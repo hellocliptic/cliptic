@@ -1,8 +1,8 @@
 // Caches the app shell so Cliptic opens offline, and adds cross-origin-isolation headers so the speech engine can use several CPU cores.
-const CACHE = 'cliptic-v10';
+const CACHE = 'cliptic-v14', FONTS = 'cliptic-fonts';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
-self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
+self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE && k !== FONTS).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 function isolate(r){
   if (!r || r.type === 'opaque' || r.type === 'error' || r.status === 0) return r;
   const h = new Headers(r.headers); h.set('Cross-Origin-Opener-Policy', 'same-origin'); h.set('Cross-Origin-Embedder-Policy', 'credentialless');
@@ -10,6 +10,7 @@ function isolate(r){
 }
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
+  if (e.request.method === 'GET' && (u.hostname === 'fonts.googleapis.com' || u.hostname === 'fonts.gstatic.com')){ e.respondWith(caches.open(FONTS).then(async c => { const hit = await c.match(e.request); const net = fetch(e.request).then(r => { if (r && (r.ok || r.type === 'opaque')) c.put(e.request, r.clone()); return r; }).catch(() => hit); return hit || net; })); return; }
   if (e.request.method !== 'GET' || u.origin !== location.origin) return; // models and CDN scripts are not touched
   e.respondWith((async () => {
     let r; try{ r = await fetch(e.request); if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); } }
